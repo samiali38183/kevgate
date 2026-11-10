@@ -1,0 +1,19 @@
+kevgate {{ .Chart.AppVersion }} installed as {{ include "kevgate.fullname" . }} in namespace {{ .Release.Namespace }}.
+
+Pod Security: label the namespace so the API server enforces the restricted profile:
+  kubectl label namespace {{ .Release.Namespace }} \
+    pod-security.kubernetes.io/enforce=restricted \
+    pod-security.kubernetes.io/enforce-version=latest \
+    pod-security.kubernetes.io/warn=restricted \
+    pod-security.kubernetes.io/audit=restricted
+
+API keys come from Secret "{{ include "kevgate.apiKeysSecretName" . }}" (key "{{ .Values.apiKeys.secretKey }}").
+{{- if .Values.networkPolicy.enabled }}
+
+NetworkPolicy is on: only pods labelled {{ toJson .Values.networkPolicy.ingress.clientPodLabels }} can reach port 8000.
+Enforcement needs a policy-aware CNI (Calico, Cilium).
+{{- end }}
+
+Try it:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "kevgate.fullname" . }} 8000:{{ .Values.service.port }}
+  curl -fsS http://127.0.0.1:8000/healthz

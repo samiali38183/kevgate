@@ -1,0 +1,16 @@
+# Values for the kind job in .github/workflows/deploy-kind.yml.
+# Image is built in the job and side-loaded with `kind load`, so it is never pulled.
+image:
+  repository: kevgate
+  tag: ci
+  pullPolicy: Never
+app:
+  env: prod
+  logLevel: INFO
+  # Low enough that the smoke test can prove 429s without hammering the runner.
+  rateLimitPerMin: 120
+apiKeys:
+  existingSecret: kevgate-api-keys
+persistence:
+  mode: pvc
+  size: 256Mi

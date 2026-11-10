@@ -1,0 +1,34 @@
+# Turns on every optional template so helm lint and kubeconform cover all of them.
+# Not a deployable configuration (two SQLite replicas split state).
+replicaCount: 2
+scaling:
+  acknowledgeSqliteSplitState: true
+image:
+  digest: sha256:0000000000000000000000000000000000000000000000000000000000000000
+apiKeys:
+  existingSecret: ""
+  create: true
+  entries:
+    - "ci-reader:queue:read:pbkdf2_sha256$600000$c2FsdA$ZmFrZWhhc2g"
+persistence:
+  mode: emptyDir
+kevFeed:
+  configMap: kev-snapshot
+networkPolicy:
+  ingress:
+    clientNamespaceLabels:
+      kevgate-access: "true"
+    metrics:
+      enabled: true
+  egress:
+    kevFeed:
+      enabled: true
+podDisruptionBudget:
+  minAvailable: 1
+autoscaling:
+  enabled: true
+metrics:
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: kube-prometheus-stack
