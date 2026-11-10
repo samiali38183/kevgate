@@ -157,17 +157,16 @@ make lint && make type && make test
 
 ## Deployment
 
-See `deploy/`.
+The service ships as a hardened container, a Helm chart, Terraform for AWS, and a GitHub Actions
+security pipeline. Start with [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md); the pipeline is described in
+[docs/PIPELINE.md](docs/PIPELINE.md), alerts and incident playbooks in [docs/RUNBOOK.md](docs/RUNBOOK.md),
+and the threat model in [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
 
-## Milestones
+What has actually been run (and where) is written down in those docs. Static validation (helm lint,
+kubeconform, terraform validate, checkov, trivy config, promtool, actionlint) was run locally. The image
+build, kind deployment, LocalStack apply and DAST scans run in GitHub Actions. Nothing is deployed to a
+real AWS account.
 
-| # | Milestone | Spec |
-|---|---|---|
-| M1 | API core: findings in, ranked queue out, validation, tests | [docs/API.md](docs/API.md) |
-| M2 | Auth (hashed scoped API keys), rate limiting, JSON logs, STRIDE threat model | this README and [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) |
-| M3 | Hardened Docker image + Trivy scan | `deploy/` |
-| M4 | Helm chart on kind: securityContext, limits, NetworkPolicy, RBAC | `deploy/` |
-| M5 | GitHub Actions security pipeline + proof PR that the gate blocks a planted bug | |
-| M6 | Terraform: ECR, least-privilege IAM, S3 (LocalStack first) | |
-| M7 | Metrics + an alert that fires + incident write-up | |
-| M8 | kubescape/kube-bench hardening + Sigma rules on K8s audit logs | |
+## License
+
+MIT
