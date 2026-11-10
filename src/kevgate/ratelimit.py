@@ -66,4 +66,5 @@ class TokenBucketLimiter:
                 return Decision(True)
             self._buckets[key] = (tokens, now)
             wait = (1.0 - tokens) / self.refill_per_sec
-            return Decision(False, max(1, math.ceil(wait)))
+            # Round off float noise (10.0000001 s) before ceiling to whole seconds.
+            return Decision(False, max(1, math.ceil(round(wait, 6))))

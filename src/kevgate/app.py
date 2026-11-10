@@ -14,6 +14,7 @@ from statistics import fmean
 from typing import Annotated, cast
 
 from fastapi import Body, Depends, FastAPI, HTTPException, Path, Query, Request, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
@@ -135,6 +136,20 @@ def require(scope: Scope) -> Callable[[Request], Principal]:
 CveParam = Annotated[str, Path(pattern=CVE_REGEX, max_length=32)]
 
 
+async def _validation_error_handler(_: Request, exc: Exception) -> JSONResponse:
+    """422 without echoing the submitted values back.
+
+    FastAPI's default handler includes each offending input, which reflects
+    client data into the response and crashes on values JSON cannot encode (NaN).
+    """
+    errors = exc.errors() if isinstance(exc, RequestValidationError) else []
+    detail = [
+        {"loc": list(e.get("loc", ())), "msg": str(e.get("msg", "")), "type": e.get("type")}
+        for e in errors[:50]
+    ]
+    return JSONResponse({"detail": detail}, status_code=422)
+
+
 def _group(items: list[ScoredFinding]) -> GroupStats:
     if not items:
         return GroupStats(count=0, mean_cvss=None, mean_epss=None, mean_days_open=None)
@@ -200,6 +215,7 @@ def create_app(kev_path: str | None = None, settings: Settings | None = None) ->
         openapi_url="/openapi.json" if docs else None,
     )
     app.state.kevgate = state
+    app.add_exception_handler(RequestValidationError, _validation_error_handler)
     # Added last = outermost: the context middleware also sees 413s from the body limit.
     app.add_middleware(BodySizeLimitMiddleware, max_bytes=settings.max_body_bytes)
     app.add_middleware(RequestContextMiddleware, metrics=metrics, csp_exempt=DOCS_PATHS)
