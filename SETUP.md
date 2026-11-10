@@ -5,7 +5,7 @@
 cd ~/code/kevgate
 python -m venv .venv && source .venv/Scripts/activate
 pip install -e ".[dev]"
-pytest -q          # M1 tests fail until you implement src/kevgate
+pytest -q          # full suite, see README for coverage
 ```
 
 ## Before M3 (needs admin, ~45 min). Run in an admin PowerShell:
