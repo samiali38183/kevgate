@@ -82,5 +82,7 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
     CMD ["python", "-c", "import sys, urllib.request; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=2).status == 200 else 1)"]
 
-# Exec form: uvicorn is PID 1 and receives SIGTERM directly for graceful shutdown.
-CMD ["uvicorn", "kevgate.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-server-header", "--timeout-graceful-shutdown", "20"]
+# Exec form, so the process is PID 1 and gets SIGTERM directly. `kevgate serve` wraps uvicorn with
+# JSON logging and no access log or Server header; equivalent to
+# `uvicorn kevgate.main:app --host 0.0.0.0 --port 8000` from the app contract.
+CMD ["kevgate", "serve", "--host", "0.0.0.0", "--port", "8000"]
