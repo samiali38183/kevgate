@@ -114,6 +114,22 @@ On my machine (Windows, no Docker):
 
 What these cannot show is in the table at the top of `docs/DEPLOYMENT.md`.
 
+## What the first CI run found
+
+The first run of `security` and `deploy-kind` failed, and `terraform` had not yet run. Fixes, each
+verified by a green run:
+
+| Finding | Cause | Fix |
+|---|---|---|
+| IaC job could not install tools | checkov and sigma-cli pin incompatible dependency ranges | each is installed in its own virtualenv and put on `PATH` |
+| Bandit B608 (3 medium) in `db.py` | SQL built with an f-string from a constant column list; not injectable, but indistinguishable from the real pattern to a scanner | the three queries are now complete string constants, no `nosec` needed |
+| Trivy: 2 HIGH in `zlib1g` (CVE-2026-76844, CVE-2026-85091) with a Debian fix | the pinned base image digest was the latest upstream, and it still shipped the unfixed package | the runtime stage runs `apt-get upgrade` and removes the apt lists in the same layer; the Trivy gate is unchanged and now passes |
+| Container smoke test: connection refused | the generated key file is mode 0600 for the runner, the container runs as UID 10001 and could not read it | the file (hash only, not the key) is made 0644 before mounting; logs are printed if startup fails |
+| Audit check: "default service account can read the secret" | kubectl prefers the client certificate in kubeconfig over `--token`, so the request ran as cluster admin | the attempt uses a throwaway kubeconfig that holds only the cluster CA and the service account token, so the audit event carries the right user |
+| LocalStack apply: S3 tag listing returned 403 | the provider lists bucket tags through S3 Control, which was not pointed at LocalStack | `s3control` endpoint set in the LocalStack root and the service enabled in the container |
+
+`terraform.yml` also gained `workflow_dispatch` so it can be run on demand.
+
 ## Running the same checks locally
 
 ```bash
@@ -127,12 +143,11 @@ kind-netpol kind-audit` runs the kind job's steps by hand.
 
 ## Known limits
 
-- First runs may expose problems I could not test locally: LocalStack support for a specific S3
-  or KMS call, ZAP's `replacer` options for the auth header, or kubescape flag changes. Each of
-  those steps has a diagnostic or is non-blocking where the risk is in the tool, not the service.
-- The kubescape step produces a report and does not gate. I have not yet picked a score threshold
-  that means something for this chart.
+- `release.yml` has not run (it needs a tag), so signing, provenance and the GHCR push are untested.
+- The kubescape step produces a report and does not gate. Its host scanner cannot start on kind
+  (no node-agent), so only the manifest-level controls are scored: NSA 79.96, MITRE 77.73. I have not
+  picked a score threshold that means something for this chart.
 - ZAP baseline is a passive scan plus a short spider. It is not an active scan, and an API without
   an OpenAPI import gives it little to crawl. Importing the OpenAPI document is the next step.
-- The Terraform job's no-drift plan after apply depends on LocalStack's fidelity. If it flaps I
-  will remove that step rather than weaken the controls it checks.
+- The Terraform job's no-drift plan after apply depends on LocalStack's fidelity. It passed on the
+  run below; if it ever flaps I will remove that step rather than weaken the controls it checks.

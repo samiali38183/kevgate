@@ -28,10 +28,10 @@ are deciding how much to trust the rest.
 | Pod Identity role assumption from EKS | no | | needs an AWS account and an EKS cluster |
 | Real storage class, node drain behaviour, HA | no | | kind is one node with local storage |
 
-None of the CI workflows had run when I wrote this. They are linted with actionlint and their
-shell steps with shellcheck, and I tested the pieces I could on their own (the ZAP gate on sample
-reports, the key parser on sample output, the promtool tests), but the first real run may need
-fixes. I will say so in the PR rather than claim a green run I have not seen.
+All four CI workflows (`ci`, `security`, `deploy-kind`, `terraform`) have run green on GitHub
+Actions; the first run of each was not green and the problems it exposed are listed in
+`docs/PIPELINE.md` under "What the first CI run found". `release.yml` has not run because no tag
+has been pushed, so signing, attestation and the GHCR push are still unproven.
 
 ## Architecture
 

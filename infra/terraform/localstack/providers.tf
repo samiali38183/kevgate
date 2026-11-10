@@ -12,7 +12,9 @@ provider "aws" {
     iam = var.localstack_endpoint
     kms = var.localstack_endpoint
     s3  = var.localstack_endpoint
-    sts = var.localstack_endpoint
+    # The provider lists bucket tags through S3 Control; without this it goes to real AWS and gets 403.
+    s3control = var.localstack_endpoint
+    sts       = var.localstack_endpoint
   }
 
   default_tags {

@@ -138,7 +138,13 @@ jobs:
       - name: Install tools
         run: |
           bash deploy/scripts/install-tools.sh helm kubeconform trivy promtool actionlint
-          python -m pip install "checkov==${CHECKOV_VERSION}" "sigma-cli==${SIGMA_CLI_VERSION}"
+          # checkov and sigma-cli pin incompatible dependency ranges, so each gets its own venv.
+          python -m venv "${RUNNER_TEMP}/venv-checkov"
+          "${RUNNER_TEMP}/venv-checkov/bin/pip" install --quiet "checkov==${CHECKOV_VERSION}"
+          python -m venv "${RUNNER_TEMP}/venv-sigma"
+          "${RUNNER_TEMP}/venv-sigma/bin/pip" install --quiet "sigma-cli==${SIGMA_CLI_VERSION}"
+          echo "${RUNNER_TEMP}/venv-checkov/bin" >> "${GITHUB_PATH}"
+          echo "${RUNNER_TEMP}/venv-sigma/bin" >> "${GITHUB_PATH}"
           sudo apt-get install -y --no-install-recommends shellcheck >/dev/null
 
       - name: Render chart with every values file
@@ -251,12 +257,16 @@ jobs:
           set -euo pipefail
           test "$(docker run --rm --entrypoint id kevgate:scan -u)" = "10001"
           bash deploy/scripts/gen-api-key.sh kevgate:scan "${RUNNER_TEMP}/keys"
+          # The key file is created 0600 for the runner user; the container runs as UID 10001 and
+          # must be able to read the file it is given. It holds only the hash line, not the key.
+          chmod 0644 "${RUNNER_TEMP}/keys/api_keys"
           docker run -d --name kg --read-only --tmpfs /tmp --user 10001:10001 \
             --cap-drop ALL --security-opt no-new-privileges \
             -e KEVGATE_ENV=prod -e KEVGATE_API_KEYS_FILE=/keys/api_keys \
             -v "${RUNNER_TEMP}/keys/api_keys:/keys/api_keys:ro" \
             -v kg-data:/data -p 8000:8000 kevgate:scan
           for _ in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/healthz >/dev/null 2>&1 && break; sleep 1; done
+          curl -fsS http://127.0.0.1:8000/healthz >/dev/null || { docker logs kg >&2; exit 1; }
           BASE_URL=http://127.0.0.1:8000 KEVGATE_API_KEY="$(cat "${RUNNER_TEMP}/keys/api_key")" bash deploy/smoke.sh
           docker inspect kg --format '{{.State.Health.Status}}' || true
 

@@ -46,7 +46,12 @@ ON CONFLICT (cve, asset) DO UPDATE SET
     last_seen = excluded.last_seen
 """
 
-_COLUMNS = "cve, asset, acr, cvss, epss, days_open"
+# Complete literal statements (no string building), so every query is visibly constant.
+_SELECT_ALL = "SELECT cve, asset, acr, cvss, epss, days_open FROM findings"
+_SELECT_BY_ASSET = "SELECT cve, asset, acr, cvss, epss, days_open FROM findings WHERE asset = ?"
+_SELECT_BY_CVE = (
+    "SELECT cve, asset, acr, cvss, epss, days_open FROM findings WHERE cve = ? ORDER BY asset"
+)
 
 
 def _now() -> str:
@@ -115,10 +120,10 @@ class FindingRepository:
     def list_findings(self, asset: str | None = None) -> list[Finding]:
         with self._lock:
             if asset is None:
-                rows = self._conn.execute(f"SELECT {_COLUMNS} FROM findings").fetchall()  # noqa: S608
+                rows = self._conn.execute(_SELECT_ALL).fetchall()
             else:
                 rows = self._conn.execute(
-                    f"SELECT {_COLUMNS} FROM findings WHERE asset = ?",  # noqa: S608
+                    _SELECT_BY_ASSET,
                     (asset,),
                 ).fetchall()
         return [_row_to_finding(r) for r in rows]
@@ -126,7 +131,7 @@ class FindingRepository:
     def get_by_cve(self, cve: str) -> list[Finding]:
         with self._lock:
             rows = self._conn.execute(
-                f"SELECT {_COLUMNS} FROM findings WHERE cve = ? ORDER BY asset",  # noqa: S608
+                _SELECT_BY_CVE,
                 (cve.upper(),),
             ).fetchall()
         return [_row_to_finding(r) for r in rows]

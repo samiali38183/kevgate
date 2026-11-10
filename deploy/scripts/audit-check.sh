@@ -16,12 +16,24 @@ mkdir -p "${OUT_DIR}"
 LOG="${OUT_DIR}/kube-apiserver-audit.log"
 
 # Secret access attempt by the namespace's default SA (no RBAC, so 403; the attempt is the signal).
+# kubectl prefers the client certificate in the current kubeconfig over --token, which would make
+# the request run as cluster admin and be logged under the wrong user. So the request uses a
+# throwaway kubeconfig that holds only the cluster endpoint, its CA and the service account token.
+tmp_kc="$(mktemp)"
+trap 'rm -f "${tmp_kc}"' EXIT
+server="$(kubectl config view --minify --raw -o jsonpath='{.clusters[0].cluster.server}')"
+kubectl config view --minify --raw -o jsonpath='{.clusters[0].cluster.certificate-authority-data}'   | base64 -d > "${tmp_kc}.ca"
 token="$(kubectl -n "${NS}" create token default --duration=10m)"
-if kubectl --token="${token}" -n "${NS}" get secret kevgate-api-keys >/dev/null 2>&1; then
-  echo "FAIL: default service account can read kevgate-api-keys"; exit 1
-fi
-echo "ok   default SA cannot read kevgate-api-keys (403)"
+KUBECONFIG="${tmp_kc}" kubectl config set-cluster sa-test --server="${server}"   --certificate-authority="${tmp_kc}.ca" --embed-certs=true >/dev/null
+KUBECONFIG="${tmp_kc}" kubectl config set-credentials sa-test --token="${token}" >/dev/null
+KUBECONFIG="${tmp_kc}" kubectl config set-context sa-test --cluster=sa-test --user=sa-test >/dev/null
+KUBECONFIG="${tmp_kc}" kubectl config use-context sa-test >/dev/null
 unset token
+if KUBECONFIG="${tmp_kc}" kubectl -n "${NS}" get secret kevgate-api-keys >/dev/null 2>&1; then
+  echo "FAIL: default service account can read kevgate-api-keys"; rm -f "${tmp_kc}.ca"; exit 1
+fi
+rm -f "${tmp_kc}.ca"
+echo "ok   default SA cannot read kevgate-api-keys (403)"
 
 sleep 3   # let the audit backend flush
 docker exec "${NODE}" cat /var/log/kubernetes/kube-apiserver-audit.log > "${LOG}"
