@@ -1,0 +1,30 @@
+title: Ephemeral Debug Container Added To kevgate Pod
+id: 8332bcc2-7969-4f63-9009-a2b49c1804e6
+status: experimental
+description: |
+    Detects kubectl debug (ephemeral containers) targeting a kevgate pod. An ephemeral container
+    can bring its own image with a shell and tools into the pod's namespaces, sidestepping the
+    minimal runtime image. Same intent as exec, but easier to miss because it is a patch, not a create.
+references:
+    - https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/
+    - https://attack.mitre.org/techniques/T1609/
+author: Sami Ali
+date: 2026-11-10
+tags:
+    - attack.execution
+    - attack.t1609
+logsource:
+    product: kubernetes
+    service: audit
+detection:
+    selection:
+        verb:
+            - 'patch'
+            - 'update'
+        objectRef.resource: 'pods'
+        objectRef.subresource: 'ephemeralcontainers'
+        objectRef.namespace: 'kevgate'
+    condition: selection
+falsepositives:
+    - Documented break-glass debugging.
+level: high

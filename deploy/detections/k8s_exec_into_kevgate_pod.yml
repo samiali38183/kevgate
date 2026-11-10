@@ -1,0 +1,34 @@
+title: Interactive Exec or Attach Into kevgate Pod
+id: 26088aa8-f741-412e-a332-c43a2a7910ff
+status: experimental
+description: |
+    Detects kubectl exec or attach into a kevgate pod. The kevgate image needs no interactive
+    access in normal operation (no shell tooling, read-only root filesystem), so a session in the
+    container is either break-glass debugging or an attacker with cluster credentials looking for
+    the API key file or the SQLite database on /data.
+references:
+    - https://kubernetes.io/docs/reference/config-api/apiserver-audit.v1/
+    - https://attack.mitre.org/techniques/T1609/
+author: Sami Ali
+date: 2026-11-10
+tags:
+    - attack.execution
+    - attack.t1609
+logsource:
+    product: kubernetes
+    service: audit
+detection:
+    # No verb filter on purpose: kubectl uses WebSocket streaming for exec since 1.31, and the
+    # audit verb follows the HTTP method (GET upgrade -> 'get', SPDY POST -> 'create').
+    selection:
+        objectRef.resource: 'pods'
+        objectRef.subresource:
+            - 'exec'
+            - 'attach'
+        objectRef.namespace: 'kevgate'
+        objectRef.name|startswith: 'kevgate-'
+    condition: selection
+falsepositives:
+    - Documented break-glass debugging (RUNBOOK.md). Correlate with an open incident or change ticket.
+    - The egress check in deploy/scripts/netpol-test.sh, which runs only in the CI kind cluster.
+level: high
