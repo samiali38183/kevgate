@@ -1,5 +1,10 @@
 # kevgate
 
+[![ci](https://github.com/samiali38183/kevgate/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/ci.yml)
+[![security](https://github.com/samiali38183/kevgate/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/security.yml)
+[![deploy-kind](https://github.com/samiali38183/kevgate/actions/workflows/deploy-kind.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/deploy-kind.yml)
+[![terraform](https://github.com/samiali38183/kevgate/actions/workflows/terraform.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/terraform.yml)
+
 kevgate is a small vulnerability intake service. Scanner findings go in, and a remediation queue comes out, ranked by known exploitation (CISA KEV), exploit likelihood (EPSS), severity (CVSS) and how much the affected asset matters (asset criticality rating, ACR).
 
 ## Why I built it
@@ -144,10 +149,10 @@ Module map: `app.py` (factory and routes), `auth.py`, `ratelimit.py`, `middlewar
 
 ## Tests and quality
 
-Numbers from my last run on Windows, Python 3.12.2:
+Numbers from the `ci` workflow on GitHub Actions (Linux, Python 3.11 and 3.12 both pass):
 
-- `pytest`: 227 tests passed in 8.2 s, including the original M1 contract tests unchanged, Hypothesis property tests for the scoring bounds and KEV ordering, the full auth matrix, rate limiting, body and count limits, CSV edge cases, KEV refresh with a mocked network, repository upserts and readiness failure.
-- Coverage: 957 statements, 0 missed; 99.91% with branch coverage on (one partial branch).
+- `pytest`: 227 tests passed in about 3.5 s, including the original M1 contract tests unchanged, Hypothesis property tests for the scoring bounds and KEV ordering, the full auth matrix, rate limiting, body and count limits, CSV edge cases, KEV refresh with a mocked network, repository upserts and readiness failure.
+- Coverage: 959 statements, 0 missed; 99.91% with branch coverage on (one partial branch).
 - `ruff check .` and `ruff format --check .`: clean.
 - `mypy --strict src`: no issues in 15 source files.
 
@@ -163,9 +168,19 @@ security pipeline. Start with [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md); the pipe
 and the threat model in [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
 
 What has actually been run (and where) is written down in those docs. Static validation (helm lint,
-kubeconform, terraform validate, checkov, trivy config, promtool, actionlint) was run locally. The image
-build, kind deployment, LocalStack apply and DAST scans run in GitHub Actions. Nothing is deployed to a
-real AWS account.
+kubeconform, terraform validate, checkov, trivy config, promtool, actionlint) was run locally and is
+repeated in CI. The image build, kind deployment, LocalStack apply and DAST scans run in GitHub
+Actions and all four workflows above are green on `main`. Nothing is deployed to a real AWS account.
+
+Results from the last green runs:
+
+- Semgrep (`p/python`, `p/owasp-top-ten`): 160 rules on 17 files, 0 findings. Bandit at medium and above: 0 findings.
+- `pip-audit` on the hashed lock: no known vulnerabilities. Trivy on the built image: 0 fixable HIGH or CRITICAL; the SBOM lists 104 components.
+- checkov: 0 failed checks across the Dockerfile (105 passed), the two rendered chart variants (181) and Terraform (138, 13 justified skips).
+- kind with Calico: 12 smoke checks, NetworkPolicy ingress and egress enforcement, Pod Security `restricted` rejects a privileged pod, and the 3 Sigma-targeted audit events are present in the API server audit log.
+- ZAP baseline: 67 rules pass, 0 warnings, 0 failures; the gate found no medium or higher alert.
+- kubescape (report only, not a gate): NSA 79.96, MITRE 77.73, overall 86.
+- LocalStack: 20 resources applied, verified through the S3, KMS and IAM APIs, a second plan shows no drift, destroy succeeds.
 
 ## License
 
