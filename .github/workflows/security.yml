@@ -138,7 +138,13 @@ jobs:
       - name: Install tools
         run: |
           bash deploy/scripts/install-tools.sh helm kubeconform trivy promtool actionlint
-          python -m pip install "checkov==${CHECKOV_VERSION}" "sigma-cli==${SIGMA_CLI_VERSION}"
+          # checkov and sigma-cli pin incompatible dependency ranges, so each gets its own venv.
+          python -m venv "${RUNNER_TEMP}/venv-checkov"
+          "${RUNNER_TEMP}/venv-checkov/bin/pip" install --quiet "checkov==${CHECKOV_VERSION}"
+          python -m venv "${RUNNER_TEMP}/venv-sigma"
+          "${RUNNER_TEMP}/venv-sigma/bin/pip" install --quiet "sigma-cli==${SIGMA_CLI_VERSION}"
+          echo "${RUNNER_TEMP}/venv-checkov/bin" >> "${GITHUB_PATH}"
+          echo "${RUNNER_TEMP}/venv-sigma/bin" >> "${GITHUB_PATH}"
           sudo apt-get install -y --no-install-recommends shellcheck >/dev/null
 
       - name: Render chart with every values file
