@@ -163,7 +163,7 @@ See `deploy/`.
 
 | # | Milestone | Spec |
 |---|---|---|
-| M1 | API core: findings in, ranked queue out, validation, tests | [milestones/M1.md](milestones/M1.md) |
+| M1 | API core: findings in, ranked queue out, validation, tests | [docs/API.md](docs/API.md) |
 | M2 | Auth (hashed scoped API keys), rate limiting, JSON logs, STRIDE threat model | this README and [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) |
 | M3 | Hardened Docker image + Trivy scan | `deploy/` |
 | M4 | Helm chart on kind: securityContext, limits, NetworkPolicy, RBAC | `deploy/` |
