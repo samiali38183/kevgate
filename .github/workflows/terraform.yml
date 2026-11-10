@@ -1,0 +1,136 @@
+name: terraform
+
+on:
+  pull_request:
+    paths: ["infra/**", ".github/workflows/terraform.yml", "deploy/checkov/**"]
+  push:
+    branches: [main]
+    paths: ["infra/**", ".github/workflows/terraform.yml", "deploy/checkov/**"]
+
+permissions: {}
+
+concurrency:
+  group: terraform-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TF_VERSION: "1.17.1"
+  CHECKOV_VERSION: "3.4.3"
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "0"
+
+jobs:
+  static:
+    name: fmt, validate, tflint, checkov
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Install tflint and checkov
+        run: |
+          bash deploy/scripts/install-tools.sh tflint
+          python -m pip install "checkov==${CHECKOV_VERSION}"
+
+      - name: terraform fmt
+        run: terraform -chdir=infra/terraform fmt -check -recursive -diff
+
+      - name: terraform validate (both roots, no backend)
+        run: |
+          for d in aws localstack; do
+            terraform -chdir="infra/terraform/${d}" init -backend=false -input=false -lockfile=readonly
+            terraform -chdir="infra/terraform/${d}" validate
+          done
+
+      - name: tflint
+        run: |
+          cfg="${PWD}/infra/terraform/.tflint.hcl"
+          for d in aws localstack modules/kevgate; do
+            tflint --chdir="infra/terraform/${d}" --config="${cfg}" --init
+            tflint --chdir="infra/terraform/${d}" --config="${cfg}" --minimum-failure-severity=warning
+          done
+
+      - name: checkov (skips are justified inline)
+        run: checkov --config-file deploy/checkov/config.yaml --framework terraform -d infra/terraform
+
+  localstack:
+    name: apply and destroy against LocalStack
+    needs: static
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    services:
+      localstack:
+        image: localstack/localstack:4.14.0@sha256:3ebc37595918b8accb852f8048fef2aff047d465167edd655528065b07bc364a
+        ports:
+          - 4566:4566
+        env:
+          SERVICES: iam,kms,s3,sts
+          DEBUG: "0"
+        options: >-
+          --health-cmd "curl -fsS http://localhost:4566/_localstack/health"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
+      TF_VAR_localstack_endpoint: http://localhost:4566
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: init
+        run: terraform -chdir=infra/terraform/localstack init -input=false -lockfile=readonly
+
+      - name: plan
+        run: terraform -chdir=infra/terraform/localstack plan -input=false -out=tfplan
+
+      - name: apply
+        run: terraform -chdir=infra/terraform/localstack apply -input=false -auto-approve tfplan
+
+      - name: Verify what was created
+        run: |
+          set -euo pipefail
+          ep="--endpoint-url http://localhost:4566"
+          bucket="$(terraform -chdir=infra/terraform/localstack output -raw reports_bucket)"
+          echo "bucket: ${bucket}"
+          # shellcheck disable=SC2086
+          {
+            aws ${ep} s3api get-public-access-block --bucket "${bucket}" \
+              | jq -e '.PublicAccessBlockConfiguration | (.BlockPublicAcls and .BlockPublicPolicy and .IgnorePublicAcls and .RestrictPublicBuckets)'
+            aws ${ep} s3api get-bucket-versioning --bucket "${bucket}" | jq -e '.Status == "Enabled"'
+            aws ${ep} s3api get-bucket-encryption --bucket "${bucket}" \
+              | jq -e '.ServerSideEncryptionConfiguration.Rules[0].ApplyServerSideEncryptionByDefault.SSEAlgorithm == "aws:kms"'
+            aws ${ep} s3api get-bucket-policy --bucket "${bucket}" --query Policy --output text \
+              | jq -e '[.Statement[] | select(.Sid == "DenyInsecureTransport")] | length == 1'
+            key_id="$(terraform -chdir=infra/terraform/localstack output -raw kms_key_arn | sed 's#.*/##')"
+            aws ${ep} kms get-key-rotation-status --key-id "${key_id}" | jq -e '.KeyRotationEnabled == true'
+            aws ${ep} iam get-role --role-name kevgate-workload \
+              | jq -e '.Role.AssumeRolePolicyDocument.Statement[0].Principal.Service == "pods.eks.amazonaws.com"'
+          }
+          echo "infrastructure matches the intended controls"
+
+      - name: Plan is empty after apply (no drift)
+        run: terraform -chdir=infra/terraform/localstack plan -input=false -detailed-exitcode
+
+      - name: destroy
+        if: always()
+        run: terraform -chdir=infra/terraform/localstack destroy -input=false -auto-approve

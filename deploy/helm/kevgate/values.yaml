@@ -1,0 +1,185 @@
+# Default values for the kevgate chart.
+# Defaults are the production posture. CI and local overrides live in ci/ and deploy/kind/.
+
+# -- Number of replicas. kevgate stores state in SQLite on /data, so more than one replica
+# splits state between pods. The chart refuses replicaCount > 1 (or HPA) unless
+# scaling.acknowledgeSqliteSplitState is true.
+replicaCount: 1
+
+scaling:
+  # -- Set true only for stateless load tests. Each replica gets its own SQLite file.
+  acknowledgeSqliteSplitState: false
+
+image:
+  repository: ghcr.io/samiali38183/kevgate
+  # -- Defaults to .Chart.AppVersion when empty.
+  tag: ""
+  # -- sha256 digest. When set, the image is referenced by digest and the tag is informational.
+  digest: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+app:
+  # -- dev or prod. prod requires an API key file and is what the chart is built for.
+  env: prod
+  logLevel: INFO
+  rateLimitPerMin: 120
+  # -- Extra environment variables (list of EnvVar). Do not put secrets here.
+  extraEnv: []
+
+apiKeys:
+  # -- Name of an existing Secret holding the hashed API key file. Created out of band
+  # (kubectl, External Secrets, Sealed Secrets). Takes precedence over create.
+  existingSecret: kevgate-api-keys
+  # -- Key inside the Secret that holds the file contents.
+  secretKey: api_keys
+  # -- Render a Secret from `entries` instead of using existingSecret.
+  create: false
+  # -- Lines in `key_id:scopes:hash` form. Hashes only, never plaintext keys.
+  entries: []
+  mountPath: /etc/kevgate/keys
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  privileged: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault
+
+service:
+  type: ClusterIP
+  port: 8000
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+    ephemeral-storage: 64Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+    ephemeral-storage: 128Mi
+
+probes:
+  startup:
+    path: /healthz
+    periodSeconds: 2
+    failureThreshold: 30
+    timeoutSeconds: 2
+  liveness:
+    path: /healthz
+    periodSeconds: 10
+    failureThreshold: 3
+    timeoutSeconds: 2
+  readiness:
+    path: /readyz
+    periodSeconds: 5
+    failureThreshold: 3
+    timeoutSeconds: 2
+
+terminationGracePeriodSeconds: 30
+
+persistence:
+  # -- pvc for durable SQLite, emptyDir for throwaway environments.
+  mode: pvc
+  # -- Empty uses the cluster default StorageClass.
+  storageClassName: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  # -- Use an existing PVC instead of creating one.
+  existingClaim: ""
+  emptyDirSizeLimit: 256Mi
+
+# -- Size of the writable /tmp emptyDir (root filesystem is read-only).
+tmpSizeLimit: 32Mi
+
+kevFeed:
+  # -- Optional ConfigMap with a KEV JSON snapshot. Empty uses the snapshot bundled in the image.
+  configMap: ""
+  configMapKey: known_exploited_vulnerabilities.json
+
+networkPolicy:
+  enabled: true
+  ingress:
+    # -- Pods carrying these labels may call the API on the service port.
+    clientPodLabels:
+      kevgate-client: "true"
+    # -- Namespaces (by label) whose labelled client pods may call the API. Empty: same namespace only.
+    clientNamespaceLabels: {}
+    # -- Allow Prometheus to scrape /metrics.
+    metrics:
+      enabled: false
+      namespaceLabels:
+        kubernetes.io/metadata.name: monitoring
+      podLabels:
+        app.kubernetes.io/name: prometheus
+  egress:
+    dns:
+      enabled: true
+      namespaceLabels:
+        kubernetes.io/metadata.name: kube-system
+      podLabels:
+        k8s-app: kube-dns
+    # -- HTTPS egress so the app can refresh the CISA KEV feed itself. Off by default: the feed
+    # ships with the image or comes from a ConfigMap. Private ranges and the cloud metadata
+    # endpoint stay blocked even when this is on.
+    kevFeed:
+      enabled: false
+      cidr: 0.0.0.0/0
+      except:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+        - 169.254.0.0/16
+        - 100.64.0.0/10
+
+podDisruptionBudget:
+  enabled: true
+  # -- With one replica, maxUnavailable 1 keeps node drains possible. Raise replicas before
+  # switching to minAvailable.
+  maxUnavailable: 1
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 70
+
+metrics:
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    scrapeTimeout: 10s
+    labels: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+topologySpreadConstraints: []
+priorityClassName: ""

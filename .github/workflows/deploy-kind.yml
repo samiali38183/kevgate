@@ -1,0 +1,169 @@
+name: deploy-kind
+
+# Deployment evidence: builds the image, installs the Helm chart on a real cluster (kind) with
+# Calico so NetworkPolicy is enforced, then attacks and audits the running service.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: deploy-kind-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CALICO_URL: https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/calico.yaml
+  CALICO_SHA256: 2de8f47595fb9c41b3f47d7b767a1f8e72ecf84057af834738ff12689a234da5
+  ZAP_IMAGE: zaproxy/zap-stable:2.17.0@sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af
+  KEY_DIR: ${{ github.workspace }}/../kevgate-keys
+
+jobs:
+  kind:
+    name: kind deploy, smoke, NetworkPolicy, ZAP, kubescape
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+
+      - name: Install kind, kubectl, helm, kubescape (pinned, checksum verified)
+        run: bash deploy/scripts/install-tools.sh kind kubectl helm kubescape
+
+      - name: Resolve requirements.lock
+        run: bash deploy/scripts/lock.sh
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Build image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          load: true
+          push: false
+          tags: kevgate:ci
+          build-args: |
+            VERSION=ci
+            VCS_REF=${{ github.sha }}
+
+      - name: Create kind cluster without the default CNI
+        run: kind create cluster --name kevgate --config deploy/kind/kind-config.yaml --wait 0s
+
+      - name: Install Calico (NetworkPolicy enforcement)
+        run: |
+          curl --proto '=https' --tlsv1.2 -fsSL -o calico.yaml "${CALICO_URL}"
+          echo "${CALICO_SHA256}  calico.yaml" | sha256sum --check --strict
+          kubectl apply -f calico.yaml
+          kubectl -n kube-system rollout status daemonset/calico-node --timeout=300s
+          kubectl -n kube-system rollout status deployment/calico-kube-controllers --timeout=300s
+          kubectl wait --for=condition=Ready nodes --all --timeout=180s
+          kubectl -n kube-system rollout status deployment/coredns --timeout=180s
+
+      - name: Load image into kind
+        run: kind load docker-image kevgate:ci --name kevgate
+
+      - name: Namespace with Pod Security restricted, generated API key, Secret
+        run: |
+          kubectl apply -f deploy/kind/namespace.yaml
+          bash deploy/scripts/gen-api-key.sh kevgate:ci "${KEY_DIR}"
+          kubectl -n kevgate create secret generic kevgate-api-keys \
+            --from-file=api_keys="${KEY_DIR}/api_keys"
+
+      - name: Helm install
+        run: |
+          helm upgrade --install kevgate deploy/helm/kevgate -n kevgate \
+            -f deploy/helm/kevgate/ci/kind-values.yaml --wait --timeout 180s
+          kubectl -n kevgate rollout status deployment/kevgate --timeout=120s
+          kubectl -n kevgate get pods,svc,pvc,networkpolicy -o wide
+
+      - name: Smoke test through port-forward
+        run: |
+          kubectl -n kevgate port-forward svc/kevgate 18000:8000 >pf.log 2>&1 &
+          echo $! > pf.pid
+          for _ in $(seq 1 30); do curl -fsS http://127.0.0.1:18000/healthz >/dev/null 2>&1 && break; sleep 1; done
+          BASE_URL=http://127.0.0.1:18000 KEVGATE_API_KEY="$(cat "${KEY_DIR}/api_key")" bash deploy/smoke.sh
+
+      - name: NetworkPolicy, egress deny and Pod Security admission
+        run: bash deploy/scripts/netpol-test.sh
+
+      - name: Audit log contains the events the Sigma rules target
+        run: bash deploy/scripts/audit-check.sh "${RUNNER_TEMP}/audit"
+
+      - name: Prove restricted pod security context on the live pod
+        run: |
+          pod="$(kubectl -n kevgate get pod -l app.kubernetes.io/name=kevgate -o jsonpath='{.items[0].metadata.name}')"
+          kubectl -n kevgate get pod "${pod}" -o json | jq -e '
+            .spec.automountServiceAccountToken == false
+            and (.spec.containers[0].securityContext
+                 | .readOnlyRootFilesystem == true and .allowPrivilegeEscalation == false
+                   and .runAsNonRoot == true and (.capabilities.drop | index("ALL")) != null)
+            and .spec.securityContext.seccompProfile.type == "RuntimeDefault"
+            and (.spec.containers[0].resources.limits | has("memory") and has("cpu"))' >/dev/null
+          echo "live pod matches the restricted profile"
+
+      - name: OWASP ZAP baseline (DAST)
+        run: |
+          mkdir -p zap-out && chmod 777 zap-out
+          key="$(cat "${KEY_DIR}/api_key")"
+          echo "::add-mask::${key}"
+          # Authenticated so the data endpoints are exercised, not only the 401 responses.
+          zopts="-config replacer.full_list(0).description=auth"
+          zopts+=" -config replacer.full_list(0).enabled=true"
+          zopts+=" -config replacer.full_list(0).matchtype=REQ_HEADER"
+          zopts+=" -config replacer.full_list(0).matchstr=Authorization"
+          zopts+=" -config replacer.full_list(0).regex=false"
+          zopts+=" -config replacer.full_list(0).replacement=Bearer\ ${key}"
+          set +e
+          docker run --rm --network host             -v "${PWD}/zap-out:/zap/wrk:rw"             -v "${PWD}/deploy/zap/rules.tsv:/zap/rules.tsv:ro"             "${ZAP_IMAGE}" zap-baseline.py -t http://127.0.0.1:18000             -c /zap/rules.tsv -J zap-report.json -r zap-report.html -m 3 -I -z "${zopts}"
+          zap_rc=$?
+          set -e
+          echo "zap-baseline exit code ${zap_rc} (0 clean, 1 fail, 2 warn, 3 error)"
+          test "${zap_rc}" -ne 3
+          test -s zap-out/zap-report.json
+          # Policy: fail on medium and above unless the rule is IGNOREd with a reason.
+          bash deploy/scripts/zap-gate.sh zap-out/zap-report.json deploy/zap/rules.tsv
+
+      - name: kubescape scan of the namespace (report)
+        if: always()
+        run: |
+          kubescape scan framework nsa,mitre --include-namespaces kevgate \
+            --format json --output kubescape.json || true
+          kubescape scan framework nsa --include-namespaces kevgate \
+            --format html --output kubescape.html || true
+          if [ -s kubescape.json ]; then
+            jq '{score: (.summaryDetails.complianceScore // .summaryDetails.score // null)}' kubescape.json || true
+          fi
+
+      - name: Diagnostics on failure
+        if: failure()
+        run: |
+          kubectl get pods -A -o wide || true
+          kubectl -n kevgate describe pods || true
+          kubectl -n kevgate logs -l app.kubernetes.io/name=kevgate --tail=100 || true
+          kubectl -n kevgate get events --sort-by=.lastTimestamp || true
+
+      - name: Stop port-forward
+        if: always()
+        run: if [ -f pf.pid ]; then kill "$(cat pf.pid)" || true; fi
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: kind-evidence
+          path: |
+            zap-out/zap-report.json
+            zap-out/zap-report.html
+            kubescape.json
+            kubescape.html
+            ${{ runner.temp }}/audit/kube-apiserver-audit.log
+          if-no-files-found: warn
+          retention-days: 30

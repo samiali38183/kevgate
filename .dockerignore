@@ -1,0 +1,18 @@
+# Allow-list build context: only what the image build needs.
+# Everything else (git history, venvs, tests, infra code, local DBs, keys) stays out.
+*
+!pyproject.toml
+!README.md
+!requirements.lock
+!src/
+!src/**
+
+# Never ship bytecode caches or editor junk even if they live under src/
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/.mypy_cache
+**/.pytest_cache
+**/.ruff_cache
+**/*.db
+**/*.sqlite*

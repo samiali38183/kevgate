@@ -1,0 +1,129 @@
+name: release
+
+# Tag push builds the image, scans it BEFORE publishing, pushes to GHCR, signs it keyless with
+# cosign (GitHub OIDC identity, recorded in the Rekor transparency log) and attaches SLSA build
+# provenance and a CycloneDX SBOM attestation. No long-lived signing key exists anywhere.
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  release:
+    name: build, scan, push, sign, attest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+      id-token: write       # keyless signing and provenance (OIDC)
+      attestations: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+
+      - name: Image name and version
+        run: |
+          echo "IMAGE=${REGISTRY}/$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')" >> "${GITHUB_ENV}"
+          echo "VERSION=${GITHUB_REF_NAME#v}" >> "${GITHUB_ENV}"
+
+      - name: Install trivy
+        run: bash deploy/scripts/install-tools.sh trivy
+
+      - name: Resolve requirements.lock
+        run: bash deploy/scripts/lock.sh
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Build (local only)
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          load: true
+          push: false
+          tags: kevgate:release
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            VCS_REF=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Scan before publishing (HIGH and CRITICAL with a fix fail the release)
+        run: trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress kevgate:release
+
+      - name: SBOM
+        run: trivy image --format cyclonedx --output kevgate.cdx.json kevgate:release
+
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push (same layers as the scanned build, from cache)
+        id: push
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE }}:${{ env.VERSION }}
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            VCS_REF=${{ github.sha }}
+          cache-from: type=gha
+          # provenance is attached by attest-build-provenance below, signed by GitHub's identity
+          provenance: false
+          sbom: false
+
+      - name: Scan the pushed digest again
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress "${IMAGE}@${DIGEST}"
+
+      - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
+
+      - name: Sign image (keyless) and attach SBOM attestation
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          cosign sign --yes "${IMAGE}@${DIGEST}"
+          cosign attest --yes --type cyclonedx --predicate kevgate.cdx.json "${IMAGE}@${DIGEST}"
+
+      - name: Build provenance attestation
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+      - name: Verify what was just published
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          cosign verify \
+            --certificate-identity-regexp "^https://github.com/${GITHUB_REPOSITORY}/\\.github/workflows/release\\.yml@refs/tags/v" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            "${IMAGE}@${DIGEST}" >/dev/null
+          echo "signature verified for ${IMAGE}@${DIGEST}"
+          echo "### Released ${IMAGE}@${DIGEST}" >> "${GITHUB_STEP_SUMMARY}"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-sbom
+          path: kevgate.cdx.json
+          retention-days: 90

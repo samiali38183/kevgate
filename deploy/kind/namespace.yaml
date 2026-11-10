@@ -1,0 +1,14 @@
+# Namespace for kevgate with Pod Security Standards "restricted" enforced by the API server.
+# Any pod that is privileged, runs as root, keeps capabilities or lacks a seccomp profile is
+# rejected at admission, independent of what the chart renders.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kevgate
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: latest

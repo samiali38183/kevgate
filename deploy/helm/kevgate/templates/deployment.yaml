@@ -1,0 +1,164 @@
+{{- include "kevgate.validate" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kevgate.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kevgate.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  revisionHistoryLimit: 5
+  {{- if eq .Values.persistence.mode "pvc" }}
+  # A ReadWriteOnce volume cannot attach to two pods on different nodes; Recreate avoids a
+  # rollout that waits forever on a Multi-Attach error.
+  strategy:
+    type: Recreate
+  {{- else }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "kevgate.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- if .Values.apiKeys.create }}
+        checksum/api-keys: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- end }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "kevgate.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "kevgate.serviceAccountName" . }}
+      # The app never talks to the Kubernetes API, so no token is mounted.
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: kevgate
+          image: {{ include "kevgate.image" . | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: KEVGATE_ENV
+              value: {{ .Values.app.env | quote }}
+            - name: KEVGATE_LOG_LEVEL
+              value: {{ .Values.app.logLevel | quote }}
+            - name: KEVGATE_RATE_LIMIT_PER_MIN
+              value: {{ .Values.app.rateLimitPerMin | quote }}
+            - name: KEVGATE_DB_PATH
+              value: /data/kevgate.db
+            - name: KEVGATE_API_KEYS_FILE
+              value: {{ printf "%s/%s" .Values.apiKeys.mountPath .Values.apiKeys.secretKey | quote }}
+            {{- if .Values.kevFeed.configMap }}
+            - name: KEVGATE_KEV_PATH
+              value: {{ printf "/etc/kevgate/kev/%s" .Values.kevFeed.configMapKey | quote }}
+            {{- end }}
+            {{- with .Values.app.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.startup.path }}
+              port: http
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+            timeoutSeconds: {{ .Values.probes.startup.timeoutSeconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path }}
+              port: http
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: http
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: tmp
+              mountPath: /tmp
+            - name: api-keys
+              mountPath: {{ .Values.apiKeys.mountPath }}
+              readOnly: true
+            {{- if .Values.kevFeed.configMap }}
+            - name: kev-feed
+              mountPath: /etc/kevgate/kev
+              readOnly: true
+            {{- end }}
+      volumes:
+        - name: data
+          {{- if eq .Values.persistence.mode "pvc" }}
+          persistentVolumeClaim:
+            claimName: {{ default (printf "%s-data" (include "kevgate.fullname" .)) .Values.persistence.existingClaim }}
+          {{- else }}
+          emptyDir:
+            sizeLimit: {{ .Values.persistence.emptyDirSizeLimit }}
+          {{- end }}
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: {{ .Values.tmpSizeLimit }}
+        - name: api-keys
+          secret:
+            secretName: {{ include "kevgate.apiKeysSecretName" . }}
+            # Owner and group read; group is fsGroup 10001.
+            defaultMode: 0440
+            items:
+              - key: {{ .Values.apiKeys.secretKey }}
+                path: {{ .Values.apiKeys.secretKey }}
+        {{- if .Values.kevFeed.configMap }}
+        - name: kev-feed
+          configMap:
+            name: {{ .Values.kevFeed.configMap }}
+            defaultMode: 0444
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

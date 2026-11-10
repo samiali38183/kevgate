@@ -1,0 +1,7 @@
+# Trivy ignore file (YAML form so every entry carries a statement). Passed with --ignorefile.
+misconfigurations:
+  - id: KSV-0125
+    statement: >-
+      "Untrusted registry" only because Trivy's built-in allow-list does not include ghcr.io.
+      ghcr.io/samiali38183 is this project's own registry; release images there are cosign-signed
+      and carry a build provenance attestation.

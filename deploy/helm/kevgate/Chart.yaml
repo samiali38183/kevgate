@@ -1,0 +1,17 @@
+apiVersion: v2
+name: kevgate
+description: Vulnerability intake service that ranks findings by CISA KEV, EPSS, CVSS and asset criticality
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+kubeVersion: ">=1.29.0-0"
+home: https://github.com/samiali38183/kevgate
+sources:
+  - https://github.com/samiali38183/kevgate
+maintainers:
+  - name: Sami Ali
+    url: https://github.com/samiali38183
+keywords:
+  - vulnerability-management
+  - cisa-kev
+  - security

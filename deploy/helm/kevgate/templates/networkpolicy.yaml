@@ -1,0 +1,75 @@
+{{- if .Values.networkPolicy.enabled -}}
+# Default deny for the kevgate pods in both directions, then explicit allows:
+#   ingress: labelled client pods (same namespace, or labelled namespaces) and optionally Prometheus
+#   egress : cluster DNS, and optionally HTTPS to public addresses for the KEV feed
+# Requires a CNI that enforces NetworkPolicy (Calico, Cilium). kind's default kindnet does not.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "kevgate.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kevgate.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "kevgate.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- toYaml .Values.networkPolicy.ingress.clientPodLabels | nindent 14 }}
+        {{- with .Values.networkPolicy.ingress.clientNamespaceLabels }}
+        - namespaceSelector:
+            matchLabels:
+              {{- toYaml . | nindent 14 }}
+          podSelector:
+            matchLabels:
+              {{- toYaml $.Values.networkPolicy.ingress.clientPodLabels | nindent 14 }}
+        {{- end }}
+      ports:
+        - port: http
+          protocol: TCP
+    {{- if .Values.networkPolicy.ingress.metrics.enabled }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              {{- toYaml .Values.networkPolicy.ingress.metrics.namespaceLabels | nindent 14 }}
+          podSelector:
+            matchLabels:
+              {{- toYaml .Values.networkPolicy.ingress.metrics.podLabels | nindent 14 }}
+      ports:
+        - port: http
+          protocol: TCP
+    {{- end }}
+  egress:
+    {{- if .Values.networkPolicy.egress.dns.enabled }}
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              {{- toYaml .Values.networkPolicy.egress.dns.namespaceLabels | nindent 14 }}
+          podSelector:
+            matchLabels:
+              {{- toYaml .Values.networkPolicy.egress.dns.podLabels | nindent 14 }}
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    {{- end }}
+    {{- if .Values.networkPolicy.egress.kevFeed.enabled }}
+    - to:
+        - ipBlock:
+            cidr: {{ .Values.networkPolicy.egress.kevFeed.cidr }}
+            {{- with .Values.networkPolicy.egress.kevFeed.except }}
+            except:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+      ports:
+        - port: 443
+          protocol: TCP
+    {{- end }}
+{{- end }}

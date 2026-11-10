@@ -1,0 +1,40 @@
+title: Privileged Or Host-Namespace Pod Requested In kevgate Namespace
+id: b6fd3692-b055-4fc4-b218-e86deaa21148
+status: experimental
+description: |
+    Detects creation of a pod in the kevgate namespace that asks for privileged mode or a host
+    namespace. The namespace enforces Pod Security Standards "restricted", so the API server
+    should reject these (responseStatus.code 403). A request that succeeds means the namespace
+    label was removed or weakened, which is a finding of its own. Both outcomes are worth an alert:
+    the attempt shows intent to escape to the node (T1611).
+    Requires the audit policy to log pods at Request level (deploy/kind/audit-policy.yaml).
+    Array handling of containers[] depends on the backend; the field paths follow the raw audit event.
+references:
+    - https://kubernetes.io/docs/concepts/security/pod-security-standards/
+    - https://attack.mitre.org/techniques/T1611/
+author: Sami Ali
+date: 2026-11-10
+tags:
+    - attack.privilege-escalation
+    - attack.t1611
+    - attack.t1610
+logsource:
+    product: kubernetes
+    service: audit
+detection:
+    selection_create:
+        verb: 'create'
+        objectRef.resource: 'pods'
+        objectRef.namespace: 'kevgate'
+    selection_privileged:
+        requestObject.spec.containers.securityContext.privileged: 'true'
+    selection_host_pid:
+        requestObject.spec.hostPID: 'true'
+    selection_host_network:
+        requestObject.spec.hostNetwork: 'true'
+    selection_host_ipc:
+        requestObject.spec.hostIPC: 'true'
+    condition: selection_create and (selection_privileged or 1 of selection_host_*)
+falsepositives:
+    - None expected in this namespace. Node-level agents belong in their own namespace.
+level: high

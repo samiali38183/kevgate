@@ -1,0 +1,278 @@
+name: security
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    # Weekly, so new advisories against unchanged code still surface.
+    - cron: "17 5 * * 1"
+
+permissions: {}
+
+concurrency:
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SEMGREP_VERSION: "1.185.0"
+  BANDIT_VERSION: "1.9.4"
+  PIP_AUDIT_VERSION: "2.10.1"
+  CHECKOV_VERSION: "3.4.3"
+  SIGMA_CLI_VERSION: "4.0.0"
+  # SARIF upload needs code scanning, which is free for public repositories only.
+  UPLOAD_SARIF: ${{ github.event.repository.private == false }}
+
+jobs:
+  sast:
+    name: SAST (Semgrep, Bandit)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Install scanners
+        run: python -m pip install "semgrep==${SEMGREP_VERSION}" "bandit[sarif]==${BANDIT_VERSION}"
+
+      - name: Semgrep (p/python, p/owasp-top-ten)
+        # --error: any finding fails the job. Findings are suppressed only with an inline
+        # `# nosemgrep: <rule-id>  reason` comment, which shows up in review.
+        run: |
+          semgrep scan --config p/python --config p/owasp-top-ten \
+            --error --metrics=off --sarif --output semgrep.sarif src
+
+      - name: Bandit (medium severity and above)
+        run: bandit -r src -ll -f sarif -o bandit.sarif
+
+      - name: Upload SARIF to code scanning
+        if: always() && env.UPLOAD_SARIF == 'true'
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          sarif_file: .
+          category: sast
+
+      - name: Keep SARIF as artifacts
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sast-sarif
+          path: "*.sarif"
+          if-no-files-found: warn
+          retention-days: 14
+
+  sca:
+    name: SCA (pip-audit on the hashed lock)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Resolve requirements.lock (runtime dependencies, sha256 hashes)
+        run: bash deploy/scripts/lock.sh
+      - name: pip-audit
+        run: |
+          python -m pip install "pip-audit==${PIP_AUDIT_VERSION}"
+          pip-audit --requirement requirements.lock --require-hashes --disable-pip \
+            --strict --format cyclonedx-json --output pip-audit.cdx.json
+          pip-audit --requirement requirements.lock --require-hashes --disable-pip --strict
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: requirements-lock
+          path: |
+            requirements.lock
+            pip-audit.cdx.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  secrets:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install gitleaks
+        run: bash deploy/scripts/install-tools.sh gitleaks
+      - name: Scan full history
+        run: gitleaks detect --source . --redact --verbose --exit-code 1 --report-format sarif --report-path gitleaks.sarif
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: gitleaks-sarif
+          path: gitleaks.sarif
+          if-no-files-found: ignore
+          retention-days: 14
+
+  iac:
+    name: IaC and config scan (checkov, trivy, lint)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Install tools
+        run: |
+          bash deploy/scripts/install-tools.sh helm kubeconform trivy promtool actionlint
+          python -m pip install "checkov==${CHECKOV_VERSION}" "sigma-cli==${SIGMA_CLI_VERSION}"
+          sudo apt-get install -y --no-install-recommends shellcheck >/dev/null
+
+      - name: Render chart with every values file
+        run: |
+          mkdir -p rendered
+          helm template kevgate deploy/helm/kevgate -n kevgate -f deploy/helm/kevgate/ci/kind-values.yaml > rendered/kind.yaml
+          helm template kevgate deploy/helm/kevgate -n kevgate -f deploy/helm/kevgate/ci/all-features-values.yaml > rendered/all.yaml
+
+      - name: checkov (Dockerfile, rendered Kubernetes, Terraform)
+        run: |
+          checkov --config-file deploy/checkov/config.yaml --framework dockerfile -f Dockerfile
+          checkov --config-file deploy/checkov/config.yaml --framework kubernetes -f rendered/kind.yaml -f rendered/all.yaml
+          checkov --config-file deploy/checkov/config.yaml --framework terraform -d infra/terraform
+
+      - name: trivy config (fail on MEDIUM and above)
+        run: |
+          trivy config --exit-code 1 --severity MEDIUM,HIGH,CRITICAL --ignorefile deploy/trivy/trivyignore.yaml Dockerfile
+          trivy config --exit-code 1 --severity MEDIUM,HIGH,CRITICAL --ignorefile deploy/trivy/trivyignore.yaml deploy/helm/kevgate
+          trivy config --exit-code 1 --severity MEDIUM,HIGH,CRITICAL --ignorefile deploy/trivy/trivyignore.yaml infra/terraform
+
+      - name: helm lint and kubeconform (strict)
+        run: |
+          for v in "" "-f deploy/helm/kevgate/ci/kind-values.yaml" "-f deploy/helm/kevgate/ci/all-features-values.yaml"; do
+            # shellcheck disable=SC2086
+            helm lint deploy/helm/kevgate --strict $v
+          done
+          for f in rendered/kind.yaml rendered/all.yaml deploy/monitoring/prometheusrule.yaml; do
+            kubeconform -strict -summary -kubernetes-version 1.37.0 \
+              -schema-location default \
+              -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' "$f"
+          done
+
+      - name: Chart guard rails reject unsafe values
+        run: |
+          expect_reject() {
+            if helm template kevgate deploy/helm/kevgate "$@" >/dev/null 2>&1; then
+              echo "chart accepted unsafe values: $*" >&2
+              exit 1
+            fi
+            echo "rejected as expected: $*"
+          }
+          expect_reject --set securityContext.allowPrivilegeEscalation=true
+          expect_reject --set securityContext.readOnlyRootFilesystem=false
+          expect_reject --set image.tag=latest
+          expect_reject --set replicaCount=2
+
+      - name: promtool (rules, unit tests, CRD in sync)
+        run: |
+          promtool check rules deploy/monitoring/kevgate-rules.yaml
+          promtool test rules deploy/monitoring/kevgate-rules.test.yaml
+          bash deploy/monitoring/render-prometheusrule.sh
+          git diff --exit-code deploy/monitoring/prometheusrule.yaml
+
+      - name: Sigma rules
+        run: sigma check deploy/detections
+
+      - name: actionlint and shellcheck
+        run: |
+          actionlint
+          shellcheck -x deploy/smoke.sh deploy/scripts/*.sh deploy/monitoring/*.sh
+
+      - name: Base image pin check (warns on drift)
+        run: bash deploy/scripts/check-base-digest.sh
+
+  image:
+    name: Image build, Trivy scan, SBOM
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Install trivy
+        run: bash deploy/scripts/install-tools.sh trivy
+      - name: Resolve requirements.lock
+        run: bash deploy/scripts/lock.sh
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - name: Build image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          load: true
+          push: false
+          tags: kevgate:scan
+          build-args: |
+            VERSION=ci
+            VCS_REF=${{ github.sha }}
+
+      - name: Trivy image scan, SARIF report
+        run: |
+          trivy image --format sarif --output trivy-image.sarif --severity HIGH,CRITICAL --ignore-unfixed kevgate:scan
+
+      - name: Trivy image gate (HIGH and CRITICAL with a fix available)
+        run: |
+          trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress kevgate:scan
+
+      - name: SBOM (CycloneDX)
+        run: |
+          trivy image --format cyclonedx --output kevgate.cdx.json kevgate:scan
+          jq '.components | length' kevgate.cdx.json
+
+      - name: Container runs read-only as UID 10001 and passes the smoke test
+        run: |
+          set -euo pipefail
+          test "$(docker run --rm --entrypoint id kevgate:scan -u)" = "10001"
+          bash deploy/scripts/gen-api-key.sh kevgate:scan "${RUNNER_TEMP}/keys"
+          docker run -d --name kg --read-only --tmpfs /tmp --user 10001:10001 \
+            --cap-drop ALL --security-opt no-new-privileges \
+            -e KEVGATE_ENV=prod -e KEVGATE_API_KEYS_FILE=/keys/api_keys \
+            -v "${RUNNER_TEMP}/keys/api_keys:/keys/api_keys:ro" \
+            -v kg-data:/data -p 8000:8000 kevgate:scan
+          for _ in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/healthz >/dev/null 2>&1 && break; sleep 1; done
+          BASE_URL=http://127.0.0.1:8000 KEVGATE_API_KEY="$(cat "${RUNNER_TEMP}/keys/api_key")" bash deploy/smoke.sh
+          docker inspect kg --format '{{.State.Health.Status}}' || true
+
+      - name: Upload SARIF to code scanning
+        if: always() && env.UPLOAD_SARIF == 'true' && hashFiles('trivy-image.sarif') != ''
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          sarif_file: trivy-image.sarif
+          category: trivy-image
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: image-sbom-and-scan
+          path: |
+            kevgate.cdx.json
+            trivy-image.sarif
+          if-no-files-found: warn
+          retention-days: 30

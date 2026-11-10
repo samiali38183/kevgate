@@ -1,0 +1,12 @@
+# checkov settings shared by local runs and .github/workflows/security.yml.
+# Every skip has a reason. A skip without a reason is a finding.
+compact: true
+quiet: true
+skip-check:
+  # Image pull policy Always. The chart references images by immutable digest in release
+  # (image.digest), so IfNotPresent cannot run a different image, and Always would make every pod
+  # restart depend on registry availability. kind CI uses Never because the image is side-loaded.
+  - CKV_K8S_15
+  # Image should use digest. Supported via image.digest and used by the release pipeline, which
+  # only knows the digest after the push. Default and kind values cannot know it in advance.
+  - CKV_K8S_43

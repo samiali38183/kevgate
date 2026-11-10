@@ -1,0 +1,168 @@
+# promtool unit tests: `promtool test rules deploy/monitoring/kevgate-rules.test.yaml`
+# Each alert gets a case where it fires and, where it matters, a case where it must stay quiet.
+rule_files:
+  - kevgate-rules.yaml
+
+evaluation_interval: 1m
+
+tests:
+  # 5xx ratio: 10% errors at 1 rps for 10 minutes fires; healthy traffic does not.
+  - interval: 1m
+    input_series:
+      - series: 'kevgate_http_requests_total{method="GET", route="/queue", status="200"}'
+        values: '0+54x15'
+      - series: 'kevgate_http_requests_total{method="GET", route="/queue", status="500"}'
+        values: '0+6x15'
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: KevgateHigh5xxRatio
+        exp_alerts: []
+      - eval_time: 12m
+        alertname: KevgateHigh5xxRatio
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              service: kevgate
+            exp_annotations:
+              summary: "kevgate 5xx ratio above 5% for 5 minutes"
+              description: "10% of kevgate requests are failing with 5xx."
+              runbook_url: "https://github.com/samiali38183/kevgate/blob/main/docs/RUNBOOK.md#kevgatehigh5xxratio"
+
+  - interval: 1m
+    input_series:
+      - series: 'kevgate_http_requests_total{method="GET", route="/queue", status="200"}'
+        values: '0+60x15'
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: KevgateHigh5xxRatio
+        exp_alerts: []
+
+  # Readiness: pod not ready for longer than 3m.
+  - interval: 1m
+    input_series:
+      - series: 'kube_pod_status_ready{namespace="kevgate", pod="kevgate-6d9f-abcde", condition="true"}'
+        values: '1 1 0 0 0 0 0 0'
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: KevgateNotReady
+        exp_alerts: []
+      - eval_time: 6m
+        alertname: KevgateNotReady
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              service: kevgate
+            exp_annotations:
+              summary: "No kevgate pod is Ready"
+              description: "Readiness (/readyz) has failed on every kevgate pod for 3 minutes; the Service has no endpoints."
+              runbook_url: "https://github.com/samiali38183/kevgate/blob/main/docs/RUNBOOK.md#kevgatenotready"
+
+  # Scrape target gone.
+  - interval: 1m
+    input_series:
+      - series: 'up{job="kevgate", instance="10.0.0.5:8000"}'
+        values: '1 1 0 0 0 0 0 0 0'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: KevgateScrapeMissing
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              service: kevgate
+            exp_annotations:
+              summary: "Prometheus cannot scrape kevgate"
+              description: "No successful scrape of job=kevgate for 5 minutes. Either the pod is down or NetworkPolicy blocks Prometheus."
+              runbook_url: "https://github.com/samiali38183/kevgate/blob/main/docs/RUNBOOK.md#kevgatescrapemissing"
+
+  # Empty KEV catalog.
+  - interval: 1m
+    input_series:
+      - series: 'kevgate_kev_entries{instance="10.0.0.5:8000"}'
+        values: '0x10'
+    alert_rule_test:
+      - eval_time: 6m
+        alertname: KevgateKevCatalogEmpty
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              service: kevgate
+            exp_annotations:
+              summary: "kevgate has no KEV catalog loaded"
+              description: "Without KEV data every finding is scored as not exploited; the queue order is wrong."
+              runbook_url: "https://github.com/samiali38183/kevgate/blob/main/docs/RUNBOOK.md#kevgatekevcatalogempty"
+
+  # p95 latency: every request lands in the 1s bucket.
+  - interval: 1m
+    input_series:
+      - series: 'kevgate_http_request_duration_seconds_bucket{method="POST", route="/findings", le="0.5"}'
+        values: '0x20'
+      - series: 'kevgate_http_request_duration_seconds_bucket{method="POST", route="/findings", le="1"}'
+        values: '0+10x20'
+      - series: 'kevgate_http_request_duration_seconds_bucket{method="POST", route="/findings", le="+Inf"}'
+        values: '0+10x20'
+    alert_rule_test:
+      - eval_time: 16m
+        alertname: KevgateHighLatencyP95
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              service: kevgate
+              route: /findings
+            exp_annotations:
+              summary: "kevgate p95 latency above 500ms on /findings"
+              description: "p95 latency on /findings is 975ms over the last 10 minutes."
+              runbook_url: "https://github.com/samiali38183/kevgate/blob/main/docs/RUNBOOK.md#kevgatehighlatencyp95"
+
+  # Auth failures: 10/min invalid keys fires per reason; a few missing headers do not.
+  - interval: 1m
+    input_series:
+      - series: 'kevgate_auth_failures_total{reason="invalid"}'
+        values: '0+10x15'
+      - series: 'kevgate_auth_failures_total{reason="missing"}'
+        values: '0+1x15'
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: KevgateAuthFailureSpike
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              service: kevgate
+              reason: invalid
+            exp_annotations:
+              summary: "kevgate auth failures spiking (invalid)"
+              description: "50 auth failures with reason=invalid in 5 minutes. invalid suggests key guessing or a revoked key still in use; forbidden suggests a valid key used outside its scopes."
+              runbook_url: "https://github.com/samiali38183/kevgate/blob/main/docs/RUNBOOK.md#kevgateauthfailurespike"
+
+  # A single forbidden (valid key, wrong scope) is enough.
+  - interval: 1m
+    input_series:
+      - series: 'kevgate_auth_failures_total{reason="forbidden"}'
+        values: '0 0 1 1 1'
+    alert_rule_test:
+      - eval_time: 4m
+        alertname: KevgateForbiddenScopeUse
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              service: kevgate
+            exp_annotations:
+              summary: "A valid kevgate key was used outside its scopes"
+              description: "Valid keys only fail with forbidden when used against an endpoint they are not scoped for. One occurrence is worth a look: it is either a misconfigured client or a leaked key being explored."
+              runbook_url: "https://github.com/samiali38183/kevgate/blob/main/docs/RUNBOOK.md#suspected-api-key-leak"
+
+  # Rate limiting: 20 x 429 per minute.
+  - interval: 1m
+    input_series:
+      - series: 'kevgate_rate_limited_total'
+        values: '0+20x15'
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: KevgateRateLimitSpike
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              service: kevgate
+            exp_annotations:
+              summary: "kevgate is rate limiting heavily"
+              description: "100 requests got 429 in 5 minutes: a client loop, a scanner, or abuse of a key."
+              runbook_url: "https://github.com/samiali38183/kevgate/blob/main/docs/RUNBOOK.md#kevgateratelimitspike"
