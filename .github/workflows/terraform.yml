@@ -77,7 +77,7 @@ jobs:
         ports:
           - 4566:4566
         env:
-          SERVICES: iam,kms,s3,sts
+          SERVICES: iam,kms,s3,s3control,sts
           DEBUG: "0"
         options: >-
           --health-cmd "curl -fsS http://localhost:4566/_localstack/health"
