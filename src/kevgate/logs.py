@@ -44,5 +44,11 @@ def configure_logging(level: str = "INFO") -> None:
     handler.setFormatter(JsonFormatter())
     root.addHandler(handler)
     root.setLevel(level)
+    # Route uvicorn's own startup/error lines through the JSON handler too, even when it
+    # was launched as plain `uvicorn kevgate.main:app` with its default text log config.
+    for name in ("uvicorn", "uvicorn.error"):
+        uv = logging.getLogger(name)
+        uv.handlers.clear()
+        uv.propagate = True
     # kevgate writes its own access line per request; uvicorn's would duplicate it.
     logging.getLogger("uvicorn.access").disabled = True
