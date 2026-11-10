@@ -1,0 +1,8 @@
+Plugin ID,CVE,CVSS v2.0 Base Score,CVSS v3.0 Base Score,Risk,Host,Protocol,Port,Name,EPSS,First Discovered
+19506,,,,None,10.0.0.5,tcp,0,Nessus Scan Information,,
+155999,CVE-2021-44228,9.3,10.0,Critical,10.0.0.5,tcp,8080,Apache Log4j < 2.15.0 Remote Code Execution,0.97,2021-12-11
+155999,CVE-2021-44228,9.3,10.0,Critical,10.0.0.5,tcp,8443,Apache Log4j < 2.15.0 Remote Code Execution,0.95,2021-12-12
+193139,CVE-2024-3400,,10.0,Critical,fw-edge-01,tcp,443,Palo Alto Networks PAN-OS GlobalProtect Command Injection,0.96,"Apr 13, 2024 08:15:00 UTC"
+151440,"CVE-2021-34527, CVE-2021-1675",9.0,8.8,Critical,dc-01,tcp,445,Windows Print Spooler RCE (PrintNightmare),0.94,2021-07-07T10:00:00Z
+175373,CVE-2023-27997,9.8,,Critical,vpn-01,tcp,443,Fortinet FortiOS SSL-VPN Heap Overflow,0.82,
+11219,,,,None,dc-01,tcp,135,Nessus SYN scanner,,

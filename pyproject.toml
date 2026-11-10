@@ -38,6 +38,7 @@ kevgate = ["py.typed", "data/*.json"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+filterwarnings = ["ignore:Using `httpx` with `starlette.testclient`"]
 
 [tool.coverage.run]
 source = ["kevgate"]
@@ -60,7 +61,7 @@ target-version = "py311"
 select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "PTH", "N"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101", "S105", "S106", "S108"]
+"tests/**" = ["S101", "S104", "S105", "S106", "S108"]
 # M1 contract file is kept byte-for-byte as written in the scaffold.
 "tests/test_m1.py" = ["E501"]
 
