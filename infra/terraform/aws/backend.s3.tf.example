@@ -1,0 +1,17 @@
+# Remote state for a real account. Rename to backend.tf, create the bucket once (versioned,
+# SSE-KMS, public access blocked), then run `terraform init -migrate-state`.
+#
+# Terraform 1.10+ locks with a lock object in the same bucket (use_lockfile). The DynamoDB table
+# lock is the older mechanism, deprecated upstream; it is shown commented out for setups that
+# are pinned to an older Terraform.
+terraform {
+  backend "s3" {
+    bucket       = "kevgate-tfstate-123456789012-us-east-1"
+    key          = "kevgate/aws/terraform.tfstate"
+    region       = "us-east-1"
+    encrypt      = true
+    kms_key_id   = "alias/kevgate-tfstate"
+    use_lockfile = true
+    # dynamodb_table = "kevgate-tfstate-lock"   # legacy locking, partition key LockID (S)
+  }
+}
