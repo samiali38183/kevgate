@@ -56,11 +56,18 @@ ENV PATH=/opt/venv/bin:$PATH \
     KEVGATE_ENV=prod \
     KEVGATE_DB_PATH=/data/kevgate.db
 
+# - Pending Debian security updates are applied on top of the pinned base, so a CVE fixed in the
+#   archive is not carried until the next upstream rebuild of the python image. apt lists and
+#   caches are removed in the same layer. The CI Trivy gate (HIGH/CRITICAL with a fix) proves it.
 # - Fixed non-root identity (UID/GID 10001) so Kubernetes runAsUser and file ownership agree.
 # - /data is the only writable path the app needs; everything else can be mounted read-only.
 # - pip is removed from the system interpreter: it is not needed at runtime and is a frequent
 #   source of scanner findings and a convenient tool for an attacker.
-RUN groupadd --system --gid 10001 kevgate \
+# checkov:skip=CKV_DOCKER_9: apt-get is used only to apply Debian security updates, see comment above
+RUN apt-get update \
+ && apt-get upgrade --yes --no-install-recommends \
+ && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+ && groupadd --system --gid 10001 kevgate \
  && useradd --system --uid 10001 --gid 10001 --no-create-home --home-dir /nonexistent \
         --shell /usr/sbin/nologin kevgate \
  && mkdir -p /data \
