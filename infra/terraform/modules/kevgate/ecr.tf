@@ -54,6 +54,7 @@ resource "aws_ecr_lifecycle_policy" "this" {
 
 # Only the CI role and the account itself may touch the repository, even if a broader IAM
 # policy is attached somewhere else by mistake.
+#trivy:ignore:AWS-0032 Deny with principal "*" restricts pushes to the CI role; it grants nothing, so it cannot expose the repository
 data "aws_iam_policy_document" "ecr_repository" {
   count = var.enable_ecr ? 1 : 0
 
