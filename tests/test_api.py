@@ -364,7 +364,7 @@ def test_csv_import_over_finding_limit(open_client: TestClient) -> None:
 def test_readyz_ok(open_client: TestClient) -> None:
     r = open_client.get("/readyz")
     assert r.status_code == 200
-    assert r.json() == {"status": "ready", "checks": {"db": "ok", "kev": "ok"}}
+    assert r.json() == {"status": "ready", "checks": {"db": "ok", "storage": "ok", "kev": "ok"}}
 
 
 def test_readyz_fails_when_db_unreachable(open_client: TestClient) -> None:
@@ -381,7 +381,7 @@ def test_readyz_fails_when_kev_missing(tmp_path: Path, caplog: pytest.LogCapture
     assert any("KEV catalog failed to load" in r.getMessage() for r in caplog.records)
     r = c.get("/readyz")
     assert r.status_code == 503
-    assert r.json()["checks"] == {"db": "ok", "kev": "fail"}
+    assert r.json()["checks"] == {"db": "ok", "storage": "ok", "kev": "fail"}
 
 
 def test_readyz_fails_when_kev_invalid(tmp_path: Path) -> None:

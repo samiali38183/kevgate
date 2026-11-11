@@ -280,7 +280,8 @@ def create_app(kev_path: str | None = None, settings: Settings | None = None) ->
     @app.get("/readyz", tags=["ops"])
     def readyz() -> JSONResponse:
         checks = {
-            "db": "ok" if repo.ping() else "fail",
+            "db": "ok" if repo.ping() and repo.write_probe() and repo.integrity_ok() else "fail",
+            "storage": "ok" if repo.storage_ok() else "fail",
             "kev": "ok" if state.kev else "fail",
         }
         ready = all(v == "ok" for v in checks.values())
