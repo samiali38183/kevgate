@@ -1,0 +1,39 @@
+name: lock-freshness
+
+# Weekly: compile a fresh lock and compare it with the committed requirements.lock. Red means a
+# newer compatible set exists; refresh with `bash deploy/scripts/lock.sh refresh` in a pull request.
+# Not a pull request check on purpose: a new upstream release must not break unrelated PRs.
+on:
+  schedule:
+    - cron: "43 5 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  compare:
+    name: Committed lock vs fresh compile
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Compile a fresh lock
+        run: bash deploy/scripts/lock.sh compile-to "${RUNNER_TEMP}/fresh.lock"
+      - name: Compare pinned versions
+        run: |
+          pins() { grep -E '^[A-Za-z0-9_.-]+==' "$1" | sed 's/ *\$//' | sort; }
+          if diff <(pins requirements.lock) <(pins "${RUNNER_TEMP}/fresh.lock") > "${RUNNER_TEMP}/lock.diff"; then
+            echo "requirements.lock is current"
+          else
+            echo "::warning title=requirements.lock is stale::newer compatible versions exist"
+            { echo '### requirements.lock is behind'; echo '```diff'; cat "${RUNNER_TEMP}/lock.diff"; echo '```'; } >> "${GITHUB_STEP_SUMMARY}"
+            cat "${RUNNER_TEMP}/lock.diff"
+            exit 1
+          fi
