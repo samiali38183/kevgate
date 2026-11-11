@@ -31,10 +31,18 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           cache: pip
-          cache-dependency-path: pyproject.toml
+          cache-dependency-path: |
+            pyproject.toml
+            requirements.lock
 
-      - name: Install
-        run: python -m pip install -e ".[dev]"
+      - name: Install runtime dependencies from the hashed lock
+        run: python -m pip install --require-hashes --no-deps -r requirements.lock
+
+      - name: Install the package and dev tools
+        # Runtime pins are already satisfied by the lock, so pip only adds the dev tools.
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pip check
 
       - name: ruff
         run: ruff check .
