@@ -20,6 +20,7 @@ from starlette.concurrency import run_in_threadpool
 
 from kevgate import __version__
 from kevgate.auth import ANONYMOUS, KeyStore, Principal, Scope, parse_bearer
+from kevgate.clientip import IPNetwork, parse_networks, resolve_client_address
 from kevgate.config import MAX_FINDINGS_PER_REQUEST, ConfigError, Settings
 from kevgate.csv_import import CsvImportError, parse_csv
 from kevgate.db import FindingRepository
@@ -41,6 +42,7 @@ from kevgate.ratelimit import TokenBucketLimiter
 from kevgate.scoring import load_kev, rank
 
 logger = logging.getLogger("kevgate")
+auth_logger = logging.getLogger("kevgate.auth")
 
 DOCS_PATHS = ("/docs", "/docs/oauth2-redirect", "/redoc")
 TOP_ASSETS = 5
@@ -55,6 +57,8 @@ class AppState:
     keys: KeyStore | None
     limiter: TokenBucketLimiter
     metrics: Metrics
+    fail_limiter: TokenBucketLimiter
+    trusted_proxies: tuple[IPNetwork, ...] = ()
 
 
 def get_state(request: Request) -> AppState:
@@ -88,17 +92,57 @@ def _load_keys(settings: Settings) -> KeyStore | None:
     return keys
 
 
+def client_address(request: Request, st: AppState) -> str:
+    """Direct peer address; X-Forwarded-For only when the peer is a trusted proxy."""
+    peer = request.client.host if request.client else None
+    return resolve_client_address(peer, request.headers.get("x-forwarded-for"), st.trusted_proxies)
+
+
+def _log_auth_failure(
+    request: Request, status: int, reason: str, client: str, key_id: str | None = None
+) -> None:
+    """One line per rejected request. Records who asked, never the credential."""
+    auth_logger.warning(
+        "authentication rejected",
+        extra={
+            "fields": {
+                "status": status,
+                "reason": reason,
+                "client_ip": client,
+                "key_id": key_id,
+                "method": request.method,
+                "path": request.url.path,
+                "request_id": getattr(request.state, "request_id", None),
+            }
+        },
+    )
+
+
 def require(scope: Scope) -> Callable[[Request], Principal]:
-    """Dependency factory: authenticate (401), rate limit (429), authorize (403)."""
+    """Dependency factory: throttle failing sources, authenticate (401), rate limit (429),
+    authorize (403)."""
 
     def dependency(request: Request) -> Principal:
         st = get_state(request)
+        client = client_address(request, st)
         if st.keys is None:
             principal = ANONYMOUS
         else:
+            # Before any credential check: a source that keeps failing is cut off first.
+            throttle = st.fail_limiter.peek(client)
+            if not throttle.allowed:
+                st.metrics.auth_throttled.inc()
+                _log_auth_failure(request, 429, "throttled", client)
+                raise HTTPException(
+                    429,
+                    "too many failed authentication attempts",
+                    headers={"Retry-After": str(throttle.retry_after)},
+                )
             token = parse_bearer(request.headers.get("authorization"))
             if token is None:
+                st.fail_limiter.charge(client)
                 st.metrics.auth_failures.labels("missing").inc()
+                _log_auth_failure(request, 401, "missing", client)
                 raise HTTPException(
                     401,
                     "missing or malformed bearer token",
@@ -106,7 +150,9 @@ def require(scope: Scope) -> Callable[[Request], Principal]:
                 )
             found = st.keys.authenticate(token)
             if found is None:
+                st.fail_limiter.charge(client)
                 st.metrics.auth_failures.labels("invalid").inc()
+                _log_auth_failure(request, 401, "invalid", client)
                 raise HTTPException(
                     401,
                     "invalid API key",
@@ -117,7 +163,7 @@ def require(scope: Scope) -> Callable[[Request], Principal]:
 
         bucket = principal.key_id
         if st.keys is None:
-            bucket = f"ip:{request.client.host if request.client else 'unknown'}"
+            bucket = f"ip:{client}"
         decision = st.limiter.acquire(bucket)
         if not decision.allowed:
             st.metrics.rate_limited.inc()
@@ -127,6 +173,7 @@ def require(scope: Scope) -> Callable[[Request], Principal]:
 
         if not principal.allows(scope):
             st.metrics.auth_failures.labels("forbidden").inc()
+            _log_auth_failure(request, 403, "forbidden", client, principal.key_id)
             raise HTTPException(403, f"API key lacks required scope {scope.value!r}")
         return principal
 
@@ -198,6 +245,8 @@ def create_app(kev_path: str | None = None, settings: Settings | None = None) ->
         keys=keys,
         limiter=TokenBucketLimiter(settings.rate_limit_per_min),
         metrics=metrics,
+        fail_limiter=TokenBucketLimiter(settings.auth_fail_limit_per_min),
+        trusted_proxies=parse_networks(settings.trusted_proxies),
     )
 
     @asynccontextmanager
@@ -231,7 +280,8 @@ def create_app(kev_path: str | None = None, settings: Settings | None = None) ->
     @app.get("/readyz", tags=["ops"])
     def readyz() -> JSONResponse:
         checks = {
-            "db": "ok" if repo.ping() else "fail",
+            "db": "ok" if repo.ping() and repo.write_probe() and repo.integrity_ok() else "fail",
+            "storage": "ok" if repo.storage_ok() else "fail",
             "kev": "ok" if state.kev else "fail",
         }
         ready = all(v == "ok" for v in checks.values())

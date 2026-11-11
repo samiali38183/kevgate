@@ -7,11 +7,17 @@
 
 kevgate is a small vulnerability intake service. Scanner findings go in, and a remediation queue comes out, ranked by known exploitation (CISA KEV), exploit likelihood (EPSS), severity (CVSS) and how much the affected asset matters (asset criticality rating, ACR).
 
-## Why I built it
+## Why it exists
 
-During my internship on a vulnerability assessment team I spent a lot of time prioritizing findings by whether the CVE was on the CISA Known Exploited Vulnerabilities list. A raw scanner export sorts by CVSS, which puts a theoretical 9.8 ahead of a 7.5 that attackers are using right now. KEV membership is the strongest signal we had, so I wanted a service that makes it the dominant factor and still uses EPSS, CVSS and asset criticality to order everything else.
+A raw scanner export sorts by CVSS, which puts a theoretical 9.8 ahead of a 7.5 that attackers are using right now. Membership in the CISA Known Exploited Vulnerabilities (KEV) catalog is the strongest prioritization signal available, so the service makes it the dominant factor and still uses EPSS, CVSS and asset criticality to order everything else. It applies the same prioritization idea used in vulnerability-management work, as a small service with an API.
 
-The service itself is deliberately small. The point of the repo is to run it the way a production team would: tested, authenticated, rate limited, observable, threat modeled, and deployed with a hardened container, Kubernetes and Terraform.
+The service itself is deliberately small. The repository also serves as a worked example of shipping such a service the way a production team would: tested, authenticated, rate limited, observable, threat modeled, and packaged with a hardened container, Kubernetes and Terraform.
+
+## Status and limits
+
+- Demonstration scope. One replica, SQLite on one volume, `Recreate` rollouts. That is a documented limitation, not a production design; the changes it would need are listed in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#what-would-change-for-production).
+- Nothing is deployed to a real AWS account. The Terraform resources (ECR, reports bucket, KMS key, workload and CI roles) have no consumer in the deployed path: the service does not call AWS and releases go to GHCR. They were only applied to LocalStack.
+- The scoring weights are a stated design choice. They have not been evaluated against remediation outcomes.
 
 ## How scoring works
 
@@ -51,7 +57,7 @@ Full reference with request and response examples: [docs/API.md](docs/API.md).
 | Method | Path | Scope | What it does |
 |---|---|---|---|
 | GET | `/healthz` | none | Liveness. Always 200 if the process is serving. |
-| GET | `/readyz` | none | 200 if the database answers and the KEV catalog is loaded, else 503. |
+| GET | `/readyz` | none | 200 if the database answers, accepts a (rolled-back) write and passes a quick integrity check, its directory is writable with headroom, and the KEV catalog is loaded; else 503. |
 | GET | `/metrics` | none | Prometheus text format. |
 | POST | `/findings` | `findings:write` | JSON list of up to 1000 findings. Upsert on (cve, asset). 201 `{"accepted": n}`. |
 | POST | `/findings/import` | `findings:write` | Nessus/Tenable CSV export as `text/csv`. 201 `{"accepted": n, "skipped": m}`. |
@@ -98,6 +104,8 @@ curl -s localhost:8000/readyz
 | `KEVGATE_KEV_PATH` | bundled `kevgate/data/kev_sample.json` | KEV catalog in the CISA JSON schema. A missing or invalid file makes `/readyz` return 503. |
 | `KEVGATE_API_KEYS_FILE` | unset | Lines of `key_id:scopes:sha256hex`. Unset in dev means auth is disabled with a warning. Unset in prod means the process exits. |
 | `KEVGATE_RATE_LIMIT_PER_MIN` | `120` | Token bucket size and refill per minute, per API key. |
+| `KEVGATE_AUTH_FAIL_LIMIT_PER_MIN` | `20` | Failed authentications (401) allowed per minute per source address. A source that exhausts its budget gets 429 before any key is checked. |
+| `KEVGATE_TRUSTED_PROXIES` | unset | Comma separated IPs or CIDRs of reverse proxies whose `X-Forwarded-For` may be trusted. Unset means the direct peer address is always used. Do not combine with `kevgate serve --proxy-headers`. |
 | `KEVGATE_LOG_LEVEL` | `INFO` | Standard Python level names. |
 
 Fixed limits: 1 MiB request body, 1000 findings per request.
@@ -112,12 +120,13 @@ The full STRIDE analysis is in [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
 | Constant-time digest compare across all keys | Timing attacks that recover a key or confirm a key_id | Key count is observable in principle, not considered sensitive |
 | Scopes (`findings:write`, `queue:read`, `admin`), 401 vs 403 | A scanner key reading the queue, or any non-admin deleting findings | Scopes are coarse; no per-asset authorization |
 | Fail closed in prod without keys; malformed key file aborts startup | Accidentally deploying an open API | Dev mode is open by design |
-| Per-key token bucket, 429 with `Retry-After` | One client exhausting the service | In memory, so per replica and reset on restart; no limit on failed auth attempts beyond what the ingress provides |
+| Per-key token bucket, 429 with `Retry-After` | One client exhausting the service | In memory, so per replica and reset on restart |
+| Per-source failure limiter, checked before authentication | Brute-forcing key values or ids | Keyed by source address, so clients behind one NAT share a budget and an attacker there can lock them out for a short time; address spoofing is only as hard as the network makes it |
 | 1 MiB body limit (declared and streamed), 1000 findings per request | Memory exhaustion via large or chunked bodies | Limits are compiled in, not configurable |
 | Strict Pydantic models (`extra="forbid"`, no coercion, no NaN, printable asset names, CVE regex) | Mass assignment, type confusion, log injection through asset names | Asset names are free text within those rules |
 | 422 responses never echo submitted values | Reflection of client data; crash on non-JSON-safe input such as NaN | Error messages still name the failing field |
 | Parameterised SQL everywhere, CHECK constraints in the schema | SQL injection; invalid rows if validation is ever bypassed | SQLite is single-writer |
-| JSON access log with key_id and request id, never keys or bodies | Repudiation; secrets in logs | Logs are only as durable as the platform's log pipeline |
+| JSON access log with key_id and request id, never keys or bodies; every 401, 403 and throttled request also logs the client address | Repudiation; secrets in logs; no way to trace a failing source | Logs are only as durable as the platform's log pipeline |
 | Security headers (`nosniff`, `no-store`, `DENY`, strict CSP, no referrer) | Content sniffing, caching of API responses, framing | `/docs` in dev is exempt from CSP; uvicorn's `server` header is only removed via `kevgate serve` or `--no-server-header` |
 | KEV refresh is a separate CLI: HTTPS only, timeout, 32 MiB cap, schema and count validation, atomic replace | Tampered or truncated feed; the API making outbound calls | Trusts CISA's TLS endpoint; no signature on the feed |
 
@@ -145,16 +154,17 @@ flowchart LR
     keys[(API key file<br/>sha256 hashes)] -->|loaded at startup| authz
 ```
 
-Module map: `app.py` (factory and routes), `auth.py`, `ratelimit.py`, `middleware.py`, `db.py`, `scoring.py`, `kev.py`, `csv_import.py`, `config.py`, `logs.py`, `metrics.py`, `cli.py`, `main.py` (ASGI entry point built from env vars).
+Module map: `app.py` (factory and routes), `auth.py`, `clientip.py`, `ratelimit.py`, `middleware.py`, `db.py`, `scoring.py`, `kev.py`, `csv_import.py`, `config.py`, `logs.py`, `metrics.py`, `cli.py`, `main.py` (ASGI entry point built from env vars).
 
 ## Tests and quality
 
-Numbers from the `ci` workflow on GitHub Actions (Linux, Python 3.11 and 3.12 both pass):
+Numbers from a local run at the time of writing (Windows, Python 3.12.2). The `ci` workflow runs the same suite on Linux with Python 3.11 and 3.12.
 
-- `pytest`: 227 tests passed in about 3.5 s, including the original M1 contract tests unchanged, Hypothesis property tests for the scoring bounds and KEV ordering, the full auth matrix, rate limiting, body and count limits, CSV edge cases, KEV refresh with a mocked network, repository upserts and readiness failure.
-- Coverage: 959 statements, 0 missed; 99.91% with branch coverage on (one partial branch).
+- `pytest`: 277 tests passed, including the original M1 contract tests unchanged, Hypothesis property tests for the scoring bounds and KEV ordering, the full auth matrix, rate limiting and the failed-authentication limiter, body and count limits, CSV edge cases, KEV refresh with a mocked network, repository upserts, and readiness checks including a deliberately corrupted database file.
+- Coverage: 1092 statements, 0 missed; 99.92% with branch coverage on (one partial branch).
 - `ruff check .` and `ruff format --check .`: clean.
-- `mypy --strict src`: no issues in 15 source files.
+- `mypy --strict src`: no issues in 16 source files.
+- Infrastructure tests: `promtool test rules` passes; `terraform test` (OIDC trust policy) passes 4 runs.
 
 ```bash
 make lint && make type && make test
@@ -167,10 +177,12 @@ security pipeline. Start with [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md); the pipe
 [docs/PIPELINE.md](docs/PIPELINE.md), alerts and incident playbooks in [docs/RUNBOOK.md](docs/RUNBOOK.md),
 and the threat model in [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
 
+Coverage numbers do not show whether a test would notice a defect, so `tests/test_mutation_kills.py` pins six behaviors that earlier survived deliberate defects (early-exit key comparison, `==` instead of `hmac.compare_digest`, `BEGIN` instead of `BEGIN IMMEDIATE`, a body counter that kept only the last chunk, CSV merge taking the minimum CVSS, an upsert that skipped `epss`).
+
 What has actually been run (and where) is written down in those docs. Static validation (helm lint,
 kubeconform, terraform validate, checkov, trivy config, promtool, actionlint) was run locally and is
 repeated in CI. The image build, kind deployment, LocalStack apply and DAST scans run in GitHub
-Actions and all four workflows above are green on `main`. Nothing is deployed to a real AWS account.
+Actions and all four workflows above are green on `main`. Nothing is deployed to a real AWS account, and the Terraform has no consumer in the deployed path (see Status and limits).
 
 Results from the last green runs:
 

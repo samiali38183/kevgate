@@ -12,7 +12,7 @@ description: |
 references:
     - https://kubernetes.io/docs/concepts/security/pod-security-standards/
     - https://attack.mitre.org/techniques/T1611/
-author: Sami Ali
+author: kevgate
 date: 2026-11-10
 tags:
     - attack.privilege-escalation

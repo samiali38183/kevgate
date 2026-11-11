@@ -8,7 +8,7 @@ description: |
 references:
     - https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/
     - https://attack.mitre.org/techniques/T1609/
-author: Sami Ali
+author: kevgate
 date: 2026-11-10
 tags:
     - attack.execution

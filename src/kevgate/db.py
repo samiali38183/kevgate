@@ -7,11 +7,15 @@ working. WAL mode lets readers proceed while a write is committing.
 
 from __future__ import annotations
 
+import os
+import shutil
 import sqlite3
 import threading
-from collections.abc import Iterator, Sequence
+import time
+from collections.abc import Callable, Iterator, Sequence
 from contextlib import contextmanager
 from datetime import UTC, datetime
+from pathlib import Path
 
 from kevgate.models import Finding
 
@@ -54,6 +58,13 @@ _SELECT_BY_CVE = (
 )
 
 
+# /readyz thresholds. Writes fail long before a volume is exactly full, so require headroom.
+MIN_FREE_BYTES = 1024 * 1024
+# PRAGMA quick_check reads the whole file; cache its verdict and cap how long it may run.
+INTEGRITY_TTL_SECONDS = 60.0
+INTEGRITY_BUDGET_SECONDS = 1.0
+
+
 def _now() -> str:
     return datetime.now(UTC).isoformat(timespec="seconds")
 
@@ -72,7 +83,11 @@ def _row_to_finding(row: sqlite3.Row) -> Finding:
 class FindingRepository:
     """All SQL lives here. Every query is parameterised."""
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, *, clock: Callable[[], float] = time.monotonic) -> None:
+        self._path = path
+        self._clock = clock
+        self._integrity_checked_at: float | None = None
+        self._integrity_ok = True
         self._lock = threading.Lock()
         self._conn = sqlite3.connect(path, check_same_thread=False, isolation_level=None)
         self._conn.row_factory = sqlite3.Row
@@ -155,6 +170,66 @@ class FindingRepository:
         except sqlite3.Error:
             return False
         return True
+
+    def storage_ok(self) -> bool:
+        """The database directory is writable and has headroom. Always true for :memory:."""
+        if self._path == ":memory:":
+            return True
+        directory = Path(self._path).resolve().parent
+        try:
+            return (
+                os.access(directory, os.W_OK)
+                and shutil.disk_usage(directory).free >= MIN_FREE_BYTES
+            )
+        except OSError:
+            return False
+
+    def write_probe(self) -> bool:
+        """Take the write lock and write a page, then roll back. Nothing is committed.
+
+        Fails on a read-only file, a read-only mount, a full disk or a lock held elsewhere.
+        """
+        try:
+            with self._lock:
+                self._conn.execute("BEGIN IMMEDIATE")
+                try:
+                    version = int(self._conn.execute("PRAGMA user_version").fetchone()[0])
+                    self._conn.execute(f"PRAGMA user_version = {version}")
+                finally:
+                    self._conn.execute("ROLLBACK")
+        except sqlite3.Error:
+            return False
+        return True
+
+    def integrity_ok(self, budget: float = INTEGRITY_BUDGET_SECONDS) -> bool:
+        """``PRAGMA quick_check(1)``, cached for INTEGRITY_TTL_SECONDS and time boxed.
+
+        quick_check is linear in database size. A run that exceeds the budget is
+        interrupted and treated as inconclusive (not a failure), so a large but
+        healthy database cannot flap readiness.
+        """
+        now = self._clock()
+        if (
+            self._integrity_checked_at is not None
+            and now - self._integrity_checked_at < INTEGRITY_TTL_SECONDS
+        ):
+            return self._integrity_ok
+        deadline = time.monotonic() + budget
+        try:
+            with self._lock:
+                self._conn.set_progress_handler(lambda: int(time.monotonic() > deadline), 1000)
+                try:
+                    row = self._conn.execute("PRAGMA quick_check(1)").fetchone()
+                finally:
+                    self._conn.set_progress_handler(None, 0)
+        except sqlite3.OperationalError as exc:
+            # Interrupted = over budget: inconclusive, not cached, so the next probe retries.
+            return "interrupted" in str(exc)
+        except sqlite3.Error:
+            return False
+        self._integrity_ok = row is not None and row[0] == "ok"
+        self._integrity_checked_at = now
+        return self._integrity_ok
 
     def close(self) -> None:
         with self._lock:

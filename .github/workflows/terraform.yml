@@ -64,6 +64,27 @@ jobs:
       - name: checkov (skips are justified inline)
         run: checkov --config-file deploy/checkov/config.yaml --framework terraform -d infra/terraform
 
+  oidc-trust:
+    name: OIDC trust policy regression (terraform test)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+      - name: Trust policy must be StringEquals on aud and one exact sub, no wildcard
+        # Fails if the sub condition becomes StringLike, gains a wildcard, or the aud/sub pair
+        # changes. No AWS account needed: the provider is mocked. See docs/DEPLOYMENT.md.
+        run: |
+          terraform -chdir=infra/terraform/modules/kevgate init -backend=false -input=false -lockfile=readonly
+          terraform -chdir=infra/terraform/modules/kevgate test
+
   localstack:
     name: apply and destroy against LocalStack
     needs: static

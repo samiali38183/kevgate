@@ -1,4 +1,4 @@
-"""In-memory token bucket rate limiter, one bucket per API key.
+"""In-memory token bucket rate limiter, one bucket per API key (or per source address).
 
 Limitation: state lives in the process, so with N replicas a key effectively
 gets N times the configured rate, and a restart resets all buckets. A shared
@@ -54,6 +54,31 @@ class TokenBucketLimiter:
         while len(self._buckets) >= self._max_buckets:
             del self._buckets[next(iter(self._buckets))]
 
+    def peek(self, key: str) -> Decision:
+        """Would ``acquire`` succeed? Does not spend a token or create a bucket."""
+        with self._lock:
+            now = self._clock()
+            tokens, last = self._buckets.get(key, (self.capacity, now))
+            tokens = min(self.capacity, tokens + (now - last) * self.refill_per_sec)
+            if tokens >= 1.0:
+                return Decision(True)
+            return Decision(False, self._retry_after(tokens))
+
+    def charge(self, key: str) -> None:
+        """Spend one token unconditionally (never below zero). Used to count failures."""
+        with self._lock:
+            now = self._clock()
+            if key not in self._buckets and len(self._buckets) >= self._max_buckets:
+                self._evict(now)
+            tokens, last = self._buckets.get(key, (self.capacity, now))
+            tokens = min(self.capacity, tokens + (now - last) * self.refill_per_sec)
+            self._buckets[key] = (max(0.0, tokens - 1.0), now)
+
+    def _retry_after(self, tokens: float) -> int:
+        wait = (1.0 - tokens) / self.refill_per_sec
+        # Round off float noise (10.0000001 s) before ceiling to whole seconds.
+        return max(1, math.ceil(round(wait, 6)))
+
     def acquire(self, key: str) -> Decision:
         with self._lock:
             now = self._clock()
@@ -65,6 +90,4 @@ class TokenBucketLimiter:
                 self._buckets[key] = (tokens - 1.0, now)
                 return Decision(True)
             self._buckets[key] = (tokens, now)
-            wait = (1.0 - tokens) / self.refill_per_sec
-            # Round off float noise (10.0000001 s) before ceiling to whole seconds.
-            return Decision(False, max(1, math.ceil(round(wait, 6))))
+            return Decision(False, self._retry_after(tokens))

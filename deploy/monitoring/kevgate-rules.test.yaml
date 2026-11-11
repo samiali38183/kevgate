@@ -133,7 +133,9 @@ tests:
               description: "50 auth failures with reason=invalid in 5 minutes. invalid suggests key guessing or a revoked key still in use; forbidden suggests a valid key used outside its scopes."
               runbook_url: "https://github.com/samiali38183/kevgate/blob/main/docs/RUNBOOK.md#kevgateauthfailurespike"
 
-  # A single forbidden (valid key, wrong scope) is enough.
+  # A single forbidden (valid key, wrong scope) is enough. The app creates the labelled series
+  # at 0 on startup (metrics.py), so the first real event is a 0 -> 1 step that increase() sees;
+  # the leading zeros below mirror that exposition. tests/test_auth_failures.py pins it.
   - interval: 1m
     input_series:
       - series: 'kevgate_auth_failures_total{reason="forbidden"}'
@@ -149,6 +151,16 @@ tests:
               summary: "A valid kevgate key was used outside its scopes"
               description: "Valid keys only fail with forbidden when used against an endpoint they are not scoped for. One occurrence is worth a look: it is either a misconfigured client or a leaked key being explored."
               runbook_url: "https://github.com/samiali38183/kevgate/blob/main/docs/RUNBOOK.md#suspected-api-key-leak"
+
+  # A series that stays at its start-up value of 0 must not alert.
+  - interval: 1m
+    input_series:
+      - series: 'kevgate_auth_failures_total{reason="forbidden"}'
+        values: '0x10'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: KevgateForbiddenScopeUse
+        exp_alerts: []
 
   # Rate limiting: 20 x 429 per minute.
   - interval: 1m

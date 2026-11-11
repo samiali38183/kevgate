@@ -1,6 +1,6 @@
 # kevgate threat model
 
-Method: STRIDE per component. For each threat I list what is implemented in this repo (with the file that does it) and what risk remains. Scope is the application as of the `feat/app-core` branch. Controls that belong to the container and cluster layer are listed under the container component as requirements the app is built to support, since that layer lives in `deploy/`.
+Method: STRIDE per component. For each threat the tables list what is implemented in this repo (with the file that does it) and what risk remains. Scope is the application on `main`. Controls that belong to the container and cluster layer are listed under the container component as requirements the app is built to support, since that layer lives in `deploy/`.
 
 ## What is worth protecting
 
@@ -33,7 +33,9 @@ Assumptions: TLS is terminated before the pod (ingress or service mesh); the key
 | Information disclosure | Error responses reflect client data or internals | Custom 422 handler drops submitted values (`app.py: _validation_error_handler`); unhandled errors return a generic 500 and the traceback goes to logs only; `/docs` and `/openapi.json` are off in prod | Field names and limits are visible in 422 messages, which is intended |
 | Information disclosure | Browser or proxy caches findings | `Cache-Control: no-store`, `nosniff`, `X-Frame-Options: DENY`, strict CSP, no referrer (`middleware.py`) | uvicorn's `server` header remains when launched with plain `uvicorn` and no `--no-server-header` |
 | Denial of service | Large or slow bodies exhaust memory | 1 MiB limit on declared length and on streamed chunks (`middleware.py: BodySizeLimitMiddleware`) | Slowloris-style slow uploads are left to the ingress and uvicorn timeouts |
-| Denial of service | One client floods the API | Per-key token bucket, 429 with `Retry-After` (`ratelimit.py`) | Per replica and in memory. Unauthenticated requests are not limited by the app, so invalid-key floods need an ingress limit. Queue and stats score every row on each call, which is fine at tens of thousands of findings but not millions |
+| Denial of service | One client floods the API | Per-key token bucket, 429 with `Retry-After` (`ratelimit.py`) | Per replica and in memory. Queue and stats score every row on each call, which is fine at tens of thousands of findings but not millions |
+| Spoofing | Brute-forcing a key or key id | Per-source-address failure limiter (`KEVGATE_AUTH_FAIL_LIMIT_PER_MIN`, default 20 per minute): each 401 spends a token, and a source with none left gets 429 before any key is compared. Valid requests and 403s do not spend tokens (`app.py: require`, `ratelimit.py: peek, charge`). Counted in `kevgate_auth_throttled_total` | Per replica and in memory. Keyed by source address: clients behind one NAT or proxy share a budget, so an attacker there can lock legitimate clients out until the bucket refills (3 seconds per token at the default). A distributed attacker with many addresses is not slowed. The 256-bit key space is what actually defeats guessing; the limiter protects CPU, logs and alert noise |
+| Repudiation | A failing request cannot be traced to a source | Every 401, 403 and throttled 429 logs `client_ip`, `reason`, `status`, `method`, `path`, `request_id` and `key_id` (null when no key matched) from the `kevgate.auth` logger; the credential is never logged (`tests/test_auth_failures.py`). `client_ip` is the direct peer address. `X-Forwarded-For` is honoured only if the peer is inside `KEVGATE_TRUSTED_PROXIES`; the header is read right to left and the first untrusted address wins, so a client cannot inject a left-most address | If `KEVGATE_TRUSTED_PROXIES` is too broad, or a trusted proxy passes the client header through unchanged, the logged address can be forged. Behind an unconfigured proxy every request shows the proxy's address, and the limiter then throttles all clients together |
 | Elevation of privilege | A read or write key performs admin actions | Scope check after authentication, admin implies all, 403 on mismatch (`auth.py: Principal.allows`) | Scopes are global; there is no per-asset or per-team authorization |
 
 ## 2. Authentication and key management
@@ -54,7 +56,7 @@ Assumptions: TLS is terminated before the pod (ingress or service mesh); the key
 | Tampering | Partial writes leave the queue inconsistent | Batches run in `BEGIN IMMEDIATE` transactions with rollback (`db.py: _tx`); WAL mode | Anyone with write access to `/data` can edit the DB directly; no row-level integrity checks or audit table |
 | Tampering | Schema drift between versions | Versioned migrations recorded in `PRAGMA user_version` (`db.py: migrate`) | Migrations are forward only; there is no down migration |
 | Information disclosure | DB file copied off the volume | File permissions and volume encryption are platform controls | Data at rest is not encrypted by the app |
-| Denial of service | Disk fills or file is locked | `busy_timeout` of 5 s; `/readyz` reports `db: fail` when the DB stops answering | One writer at a time, and one SQLite file cannot be shared by several replicas. Horizontal scaling needs Postgres |
+| Denial of service | Disk fills or file is locked | `busy_timeout` of 5 s; `/readyz` reports `storage: fail` when the DB directory is not writable or has under 1 MiB free, and `db: fail` when the DB stops answering, a write (taken inside a transaction that is rolled back) fails, or `PRAGMA quick_check(1)` reports damage. The integrity result is cached for 60 s and capped at 1 s of run time; a run that exceeds the cap counts as inconclusive, not failed (`db.py`) | One writer at a time, and one SQLite file cannot be shared by several replicas. Horizontal scaling needs Postgres. A full disk is caught only when free space drops under the threshold, and there is still no volume-usage alert |
 
 ## 4. KEV feed
 
@@ -83,6 +85,7 @@ The image, chart and policies are built in `deploy/`. The app is written so thos
 
 1. An authenticated writer can submit false data. Mitigation would be per-source keys with asset ownership and anomaly alerts on sudden drops in KEV findings.
 2. No key lifecycle: no expiry, rotation or revocation without a restart.
-3. Rate limiting is per replica and does not cover failed authentication; needs an ingress or gateway limit.
+3. Rate limiting and the failed-authentication limiter are per replica and per source address; they need a shared store or a gateway limit before the service runs more than one replica.
 4. The KEV feed is not signed; a removal attack on the feed would not be detected.
 5. SQLite limits the service to a single replica; moving to Postgres is the path to HA.
+6. The CI role's trust policy is pinned by a `terraform test` (see docs/DEPLOYMENT.md), but `main` has no branch protection, so whoever can push to `main` controls what may assume that role. The role has no consumer today.

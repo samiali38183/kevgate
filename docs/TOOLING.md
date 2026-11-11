@@ -1,8 +1,8 @@
 # Tooling
 
-Two sets of tools: the ones I installed on my Windows machine for static validation, and the ones
+Two sets of tools: the ones installed on a Windows workstation for static validation, and the ones
 CI installs on Linux runners. Everything is pinned. Local installs are user-level binaries in
-`C:/Users/samis/bin`. Each download was checked against the checksum the project publishes.
+`%USERPROFILE%/bin`. Each download was checked against the checksum the project publishes.
 
 ## Local (Windows, amd64), verified 2026-11-10
 
@@ -19,7 +19,7 @@ CI installs on Linux runners. Everything is pinned. Local installs are user-leve
 | promtool (Prometheus) | 3.16.0 | `89c03c2f24400fb58668440b6d7226f68564acda27d657e77acfbda42be32cb3` (zip) | release `sha256sums.txt` |
 | shellcheck | v0.11.0 | `8a4e35ab0b331c85d73567b12f2a444df187f483e5079ceffa6bda1faa2e740e` (zip) | none published; matches the digest GitHub records for the release asset |
 
-Python tools, each in its own virtualenv under `C:/Users/samis/code/.tools`:
+Python tools, each in its own virtualenv under a tools directory:
 
 | Tool | Version |
 |---|---|

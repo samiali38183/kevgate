@@ -13,6 +13,8 @@ from prometheus_client import (
     generate_latest,
 )
 
+AUTH_FAILURE_REASONS = ("missing", "invalid", "forbidden")
+
 LATENCY_BUCKETS = (0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0)
 
 
@@ -51,6 +53,16 @@ class Metrics:
             "Requests rejected with 429.",
             registry=self.registry,
         )
+        self.auth_throttled = Counter(
+            "kevgate_auth_throttled",
+            "Requests rejected with 429 because the source address had too many failed "
+            "authentications.",
+            registry=self.registry,
+        )
+        # Create every labelled series now. A series that first appears with value 1 gives
+        # Prometheus' increase() no earlier sample, so the first event would never alert.
+        for reason in AUTH_FAILURE_REASONS:
+            self.auth_failures.labels(reason).inc(0)
         self.kev_entries = Gauge(
             "kevgate_kev_entries",
             "CVE IDs in the loaded KEV catalog.",

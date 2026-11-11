@@ -8,10 +8,13 @@ Authentication: `Authorization: Bearer <key>` on every endpoint except `/healthz
 
 Order of checks on a protected endpoint:
 
+0. The source address has used up its failed-authentication budget (`KEVGATE_AUTH_FAIL_LIMIT_PER_MIN`): `429` with `Retry-After`, before the key is looked at.
 1. No header, wrong scheme, or a token over 256 characters: `401` with `WWW-Authenticate: Bearer realm="kevgate"`.
 2. Token does not match any stored hash: `401` with `error="invalid_token"`.
 3. Rate limit exceeded for this key: `429` with `Retry-After: <seconds>`.
 4. Key is valid but lacks the scope: `403`.
+
+Each 401 and 403 is logged with the client address (never the key). Only 401s count against the failure budget.
 
 Body limits (all endpoints): more than 1 MiB, declared or streamed, returns `413`. A `Content-Length` that is not a number returns `400`.
 
@@ -51,10 +54,10 @@ curl -s localhost:8000/healthz
 
 ## GET /readyz
 
-No auth. Checks that the database answers `SELECT 1` and that the KEV catalog loaded with at least one entry.
+No auth. Checks that the database answers `SELECT 1`, accepts a write that is rolled back, and passes `PRAGMA quick_check(1)` (cached for 60 s, capped at 1 s); that the database directory is writable with at least 1 MiB free; and that the KEV catalog loaded with at least one entry.
 
 ```json
-{"status": "ready", "checks": {"db": "ok", "kev": "ok"}}
+{"status": "ready", "checks": {"db": "ok", "storage": "ok", "kev": "ok"}}
 ```
 
 `503` with `"status": "not ready"` and the failing check set to `"fail"` otherwise.
@@ -70,6 +73,7 @@ No auth. Prometheus text exposition format. kevgate metrics:
 | `kevgate_findings_ingested_total` | counter | `source` (`json` or `csv`) |
 | `kevgate_auth_failures_total` | counter | `reason` (`missing`, `invalid`, `forbidden`) |
 | `kevgate_rate_limited_total` | counter | |
+| `kevgate_auth_throttled_total` | counter | |
 | `kevgate_kev_entries` | gauge | |
 
 Process and platform collectors are included as well.
