@@ -25,7 +25,7 @@ Severity critical. More than 5% of requests failed with 5xx for 5 minutes.
 
 1. Logs: `k logs -l app.kubernetes.io/name=kevgate --tail=500 | jq -c 'select(.status>=500)'`. Look for a repeating exception.
 2. Storage: `k exec deploy/kevgate -- python -c "import os;s=os.statvfs('/data');print(s.f_bavail*s.f_frsize//2**20,'MiB free')"`. A full `/data` makes SQLite writes fail. A full volume is the most likely cause.
-3. Readiness: `curl` through a port-forward (`k port-forward svc/kevgate 8000:8000`) to `/readyz`; the body says which check failed (`db` or `kev`).
+3. Readiness: `curl` through a port-forward (`k port-forward svc/kevgate 8000:8000`) to `/readyz`; the body says which check failed (`db`, `storage` or `kev`).
 4. Recent change: `helm history kevgate -n $NS`.
 
 Remediation: if the change is recent, `helm rollback kevgate <revision> -n $NS`. If the volume is
@@ -40,7 +40,7 @@ Severity critical. No pod is Ready, so the Service has no endpoints.
 1. `k get pods` then `k describe pod <pod>`: look at probe failures and the last state.
 2. `k logs <pod> --previous` if it is crash-looping. A prod start that cannot read the key file exits immediately with a config error.
 3. `/readyz` failing `kev`: the KEV catalog did not load. Check `KEVGATE_KEV_PATH` and the optional ConfigMap (`k get cm`).
-4. `/readyz` failing `db`: check the PVC is `Bound` and the mount is writable by UID 10001 (`fsGroup`).
+4. `/readyz` failing `db` or `storage`: check the PVC is `Bound`, the mount is writable by UID 10001 (`fsGroup`) and has free space (`storage` fails under 1 MiB free). `db` also fails if a write cannot be taken (read-only volume, lock held) or `PRAGMA quick_check` finds damage; restore from a copy of `/data/kevgate.db` in that case.
 5. Pending pod: `k describe pod` shows scheduling or volume attach problems.
 
 Remediation: fix the cause named above. If a bad Secret was mounted, correct it and
@@ -84,7 +84,7 @@ Severity warning. More than 25 auth failures in 5 minutes for one `reason`.
 | `invalid` | key not in the key file | Key guessing, or a revoked key still deployed in a client. |
 | `forbidden` | valid key, wrong scope | A client calling an endpoint it has no scope for. See the leak playbook. |
 
-1. Pattern: the access log records `path`, `status` and `key_id` but not the client address, so find the paths and key ids first: `k logs -l app.kubernetes.io/name=kevgate --tail=2000 | jq -r 'select(.status==401 or .status==403) | "\(.path) \(.key_id)"' | sort | uniq -c | sort -rn | head`. For the source address use CNI flow logs or the node's conntrack data, since the app does not log it.
+1. Pattern: every 401, 403 and throttled 429 is logged by `kevgate.auth` with the client address and never the key: `k logs -l app.kubernetes.io/name=kevgate --tail=2000 | jq -r 'select(.logger=="kevgate.auth") | "\(.reason) \(.client_ip) \(.key_id)"' | sort | uniq -c | sort -rn | head`. The address is the direct peer; behind a reverse proxy it is the proxy's address unless `KEVGATE_TRUSTED_PROXIES` lists it. `kevgate_auth_throttled_total` counts requests refused because a source exceeded `KEVGATE_AUTH_FAIL_LIMIT_PER_MIN`.
 2. NetworkPolicy should already limit who can connect at all. A failure from an address that should not be able to connect means the policy is not enforced; check the CNI.
 3. If the pattern is `invalid` from one source at a steady rate, treat it as probing and note the source.
 
@@ -117,7 +117,7 @@ fires from an unexpected client.
    shred -u /tmp/keys.current /tmp/keys.new
    ```
 3. **Issue a replacement** for the legitimate client: `kevgate keygen --scope <scopes> --key-id <new-id>`. Give the client the key; add only the hash line to the Secret.
-4. **Find the exposure window.** From the log: requests with that `key_id` between when it was created and when it was revoked, by `path` and `status`, and `POST /findings` volume. The app does not log source addresses, so correlate timestamps with CNI or load balancer logs if you need them. Compare the queue with the last known good scanner import.
+4. **Find the exposure window.** From the log: requests with that `key_id` between when it was created and when it was revoked, by `path` and `status`, and `POST /findings` volume. Failed requests log `client_ip` (see KevgateAuthFailureSpike); successful ones do not, so correlate timestamps with CNI or load balancer logs for the addresses that used the key successfully. Compare the queue with the last known good scanner import.
 5. **Check data integrity.** If the leaked key had `findings:write`, look for findings you did not import. Re-import the last good scanner export into a clean database if in doubt (`kevgate import-csv`), because injected findings can bury real ones.
 6. **Remove the source.** Delete the key from wherever it leaked (git history rewrite plus rotate, delete the log, purge the artifact). Rotation already happened; do the cleanup to stop the next leak.
 7. **Write it up.** Root cause (why did a plaintext key leave the client?), time to revoke, data touched, fix. Add a gitleaks rule if the key format was missed.
