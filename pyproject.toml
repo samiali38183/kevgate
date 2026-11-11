@@ -1,6 +1,6 @@
 [project]
 name = "kevgate"
-version = "0.1.0"
+version = "0.1.1"
 description = "Vulnerability intake service that ranks findings by CISA KEV, EPSS, CVSS and asset criticality"
 readme = "README.md"
 requires-python = ">=3.11"
