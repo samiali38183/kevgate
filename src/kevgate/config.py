@@ -6,6 +6,7 @@ Every setting has a safe default except authentication in production: if
 
 from __future__ import annotations
 
+import ipaddress
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -15,6 +16,7 @@ from typing import Literal
 DEFAULT_DB_PATH = "/data/kevgate.db"
 DEFAULT_KEV_PATH = str(Path(__file__).resolve().parent / "data" / "kev_sample.json")
 DEFAULT_RATE_LIMIT_PER_MIN = 120
+DEFAULT_AUTH_FAIL_LIMIT_PER_MIN = 20
 MAX_BODY_BYTES = 1024 * 1024
 MAX_FINDINGS_PER_REQUEST = 1000
 
@@ -36,6 +38,8 @@ class Settings:
     rate_limit_per_min: int = DEFAULT_RATE_LIMIT_PER_MIN
     log_level: str = "INFO"
     max_body_bytes: int = MAX_BODY_BYTES
+    auth_fail_limit_per_min: int = DEFAULT_AUTH_FAIL_LIMIT_PER_MIN
+    trusted_proxies: tuple[str, ...] = ()
 
     @property
     def is_prod(self) -> bool:
@@ -62,6 +66,27 @@ class Settings:
         if level not in _LOG_LEVELS:
             raise ConfigError(f"KEVGATE_LOG_LEVEL must be one of {sorted(_LOG_LEVELS)}")
 
+        fail_raw = e.get(
+            "KEVGATE_AUTH_FAIL_LIMIT_PER_MIN", str(DEFAULT_AUTH_FAIL_LIMIT_PER_MIN)
+        ).strip()
+        try:
+            fail_limit = int(fail_raw)
+        except ValueError as exc:
+            raise ConfigError("KEVGATE_AUTH_FAIL_LIMIT_PER_MIN must be an integer") from exc
+        if fail_limit < 1:
+            raise ConfigError("KEVGATE_AUTH_FAIL_LIMIT_PER_MIN must be >= 1")
+
+        proxies = tuple(
+            p.strip() for p in e.get("KEVGATE_TRUSTED_PROXIES", "").split(",") if p.strip()
+        )
+        for entry in proxies:
+            try:
+                ipaddress.ip_network(entry, strict=False)
+            except ValueError as exc:
+                raise ConfigError(
+                    f"KEVGATE_TRUSTED_PROXIES entry {entry!r} is not an IP address or CIDR"
+                ) from exc
+
         return cls(
             env=env,
             db_path=e.get("KEVGATE_DB_PATH", "").strip() or DEFAULT_DB_PATH,
@@ -69,4 +94,6 @@ class Settings:
             api_keys_file=e.get("KEVGATE_API_KEYS_FILE", "").strip() or None,
             rate_limit_per_min=rate,
             log_level=level,
+            auth_fail_limit_per_min=fail_limit,
+            trusted_proxies=proxies,
         )
