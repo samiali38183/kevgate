@@ -9,7 +9,7 @@ apiKeys:
   existingSecret: ""
   create: true
   entries:
-    - "ci-reader:queue:read:pbkdf2_sha256$600000$c2FsdA$ZmFrZWhhc2g"
+    - "ci-reader:queue:read:0000000000000000000000000000000000000000000000000000000000000000"
 persistence:
   mode: emptyDir
 kevFeed:

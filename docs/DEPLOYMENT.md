@@ -1,8 +1,8 @@
 # Deployment
 
-This describes how kevgate is packaged for Kubernetes and AWS, why each control is there, and
-which parts have actually been exercised. The next two sections matter most if you are deciding
-how much to trust the rest: what is validated where, and what is unused or unproven.
+How kevgate is packaged for Kubernetes and AWS, why each control is there, and which parts I
+have actually run. Read the next two sections first: what is validated where, and what is unused
+or unproven. They tell you how far to trust the rest.
 
 ## What is validated where
 
@@ -29,34 +29,36 @@ how much to trust the rest: what is validated where, and what is unused or unpro
 | Real storage class, node drain behaviour, HA | no | | kind is one node with local storage |
 
 The four CI workflows (`ci`, `security`, `deploy-kind`, `terraform`) have run green on GitHub
-Actions; the first run of each was not green and the problems it exposed are listed in
+Actions. The first run of `security` and `deploy-kind` failed, and what it exposed is listed in
 `docs/PIPELINE.md` under "What the first CI run found". `release.yml` ran for tags `v0.1.0` and
-`v0.1.1` and every step succeeded. The provenance attestation of the 0.1.1 image was verified with
-`gh attestation verify` from outside the workflow; `cosign verify` has not been run independently, and nothing
-in the cluster enforces either.
+`v0.1.1`, and every step succeeded. I verified the provenance attestation of the 0.1.1 image with
+`gh attestation verify` from outside the workflow. I have not run `cosign verify` independently,
+and nothing in the cluster enforces either check.
 
 ## What is unused or unproven
 
-Stated plainly, so none of it has to be inferred from the tables:
+The Terraform resources have no consumer in the deployed path. The reports bucket, the KMS key,
+the ECR repository, the workload role and the GitHub CI role are not used by anything. The service
+has no AWS SDK code, the workflows have no `role-to-assume`, and releases go to GHCR. The Terraform
+shows how such resources would be defined and constrained. It is not part of how the service runs.
 
-- **The Terraform resources have no consumer in the deployed path.** The reports bucket, the KMS
-  key, the ECR repository, the workload role and the GitHub CI role are not used by anything: the
-  service contains no AWS SDK code, the workflows contain no `role-to-assume`, and releases go to
-  GHCR. The Terraform shows how such resources would be defined and constrained; it is not part of
-  how the service runs.
-- **Terraform was only applied to LocalStack**, never to a real AWS account. The ECR repository
-  and the GitHub OIDC role are not even created there (LocalStack Community has no ECR), so they
-  are checked statically (`validate`, tflint, checkov, trivy config) plus the `terraform test`
-  regression described under Terraform. EKS Pod Identity trust has never been exercised.
-- **One replica on SQLite is a limitation, not a design for production.** Every rollout is an
-  outage, a node loss waits on the volume, and there is no backup or restore procedure that has
-  been tested. See "What would change for production" below.
-- **Alert rules and the dashboard never ran against a live Prometheus.** They are checked by
+I only applied Terraform to LocalStack, never to a real AWS account. LocalStack Community has no
+ECR, so the ECR repository and the GitHub OIDC role are not created there. They are checked
+statically (`validate`, tflint, checkov, trivy config) and by the `terraform test` described below.
+EKS Pod Identity trust has never been exercised.
+
+One replica on SQLite is a limitation, not a production design. Every rollout is an outage, a node
+loss waits on the volume, and I have not tested a backup or restore. See "What would change for
+production" below.
+
+Other things that never ran:
+
+- The alert rules and dashboard have not run against a live Prometheus. They are covered by
   `promtool` unit tests and schema validation only.
-- **The Sigma rules never ran in a SIEM.** `audit-check.sh` is a hand translation to `jq` that
+- The Sigma rules have not run in a SIEM. `audit-check.sh` is a hand translation to `jq` that
   checks field names against a real kind audit log.
-- **Image signature enforcement, admission policy, node drains, multi-node scheduling and load
-  behavior** were not tested.
+- Image signature enforcement, admission policy, node drains, multi-node scheduling and load
+  behavior were not tested.
 
 ## Architecture
 
@@ -108,18 +110,18 @@ into a virtualenv and builds the kevgate wheel. The runtime stage copies only th
   and warns when upstream has moved, so the pin is bumped on purpose.
 - UID and GID 10001, no home directory, `nologin` shell. `/data` is the only writable path.
 - pip is removed from both the builder venv and the runtime interpreter.
-- There is a shell in the image (Debian slim ships `sh`). A distroless base would remove it, but
-  The slim image is used so `kubectl exec` debugging and the egress test in `netpol-test.sh` can
-  run Python. The Sigma rules treat any exec into the pod as an alert anyway. Moving to distroless
-  is the next step if that test is dropped.
+- There is a shell in the image (Debian slim ships `sh`). A distroless base would remove it. I
+  kept slim so `kubectl exec` debugging and the egress test in `netpol-test.sh` can run Python.
+  The Sigma rules treat any exec into the pod as an alert anyway. Moving to distroless is the next
+  step if that test goes.
 - `HEALTHCHECK` uses Python's `urllib`, so it needs neither curl nor a shell. Kubernetes uses its
   own probes.
 - `CMD ["kevgate", "serve", ...]` in exec form, so uvicorn is PID 1 and gets SIGTERM.
 
 ## Helm chart
 
-`deploy/helm/kevgate`, validated by `values.schema.json`. The security settings are not only
-defaults; the schema rejects values that weaken them.
+`deploy/helm/kevgate`, validated by `values.schema.json`. The security settings are defaults,
+and the schema also rejects values that weaken them.
 
 | Area | Setting |
 |---|---|
@@ -148,7 +150,7 @@ client; only the hash goes into the cluster.
 ### Known chart limits
 
 - State is SQLite on one PVC, so it runs one replica with `Recreate` rollouts. Scaling out needs
-  a different store (the README already plans Postgres), not a bigger `replicaCount`.
+  a different store such as Postgres, not a bigger `replicaCount`.
 - `kind` has one node and local-path storage. Node drains and zone failures have not been tested.
 
 ## Local cluster (needs Docker)
@@ -220,7 +222,7 @@ configured for this repository.
 | Layer | Control | Enforced by | Evidence |
 |---|---|---|---|
 | Supply chain | locked, hash-verified dependencies (`requirements.lock` is committed; refresh with `deploy/scripts/lock.sh refresh`) | `pip --require-hashes` in `ci` and in the image build; weekly `lock-freshness` and Dependabot flag staleness | image build in CI |
-| Supply chain | pinned base digest, pinned actions by SHA, pinned tool checksums | Dockerfile, workflows, `install-tools.sh` | grep in review, actionlint |
+| Supply chain | pinned base digest, pinned actions by SHA, pinned tool checksums | Dockerfile, workflows, `install-tools.sh` | `grep`, actionlint |
 | Supply chain | signed image and provenance | cosign keyless, `attest-build-provenance` | `release.yml` verify step |
 | Build | CVE gate on HIGH and CRITICAL with a fix | Trivy | `security.yml`, `release.yml` |
 | Build | SAST, SCA, secret scan | Semgrep, Bandit, pip-audit, gitleaks | `security.yml` |
@@ -249,32 +251,32 @@ configured for this repository.
 
 ## What would change for production
 
-The current deployment is a single-replica demonstration. Replacing the following would be the
-minimum before running it for real:
+The current deployment is a single-replica demonstration. This is the minimum I would change
+before running it for real.
 
-1. **Storage: Postgres instead of SQLite.** SQLite on one ReadWriteOnce volume forces one replica
+1. Storage: Postgres instead of SQLite. SQLite on one ReadWriteOnce volume forces one replica
    and `Recreate` rollouts. A managed Postgres removes the single-writer file, lets the chart use
    `RollingUpdate` with several replicas, and makes the pod stateless. The repository class in
    `db.py` is the only place with SQL, so the change is contained; the schema constraints and
    migrations would move into the new store.
-2. **Replicas and disruption.** With state external: at least two replicas, a PodDisruptionBudget
+2. Replicas and disruption. With state external: at least two replicas, a PodDisruptionBudget
    with `minAvailable: 1` (that setting blocks drains today because there is one replica),
    anti-affinity or topology spread across nodes, and an HPA. The in-memory rate limiter and
    failure limiter then need a shared store (or a gateway limit), because each replica currently
    keeps its own buckets.
-3. **Backup and restore.** Today the only procedure is copying `/data/kevgate.db`, and it has never
+3. Backup and restore. Today the only procedure is copying `/data/kevgate.db`, and it has never
    been restored in a test. Needed: scheduled backups (managed Postgres snapshots and point in time
    recovery, or for SQLite a CronJob running `sqlite3 .backup` to a second volume or object
    storage), retention, and a restore drill whose duration is recorded.
-4. **Key lifecycle.** Keys and the KEV catalog are read once at startup, so changing either means a
+4. Key lifecycle. Keys and the KEV catalog are read once at startup, so changing either means a
    restart (and, with one replica, an outage). Production needs hot reload or a managed secret
    source, plus key expiry and last-used tracking.
-5. **Observability that has run.** Run the alert rules and dashboard against a real Prometheus,
+5. Alerts that have run. Run the alert rules and dashboard against a real Prometheus,
    add a volume-usage alert (`kubelet_volume_stats_used_bytes`), measure latency against row count
    and set the latency threshold from that baseline, and ship logs somewhere durable.
-6. **Supply-chain enforcement.** Verify the cosign signature at admission (Kyverno or a similar
+6. Supply-chain enforcement. Verify the cosign signature at admission (Kyverno or a similar
    controller), deploy by image digest, and turn on branch protection with required checks for
    `main`.
-7. **AWS.** Either wire the Terraform resources into something that uses them (push the release
+7. AWS. Either wire the Terraform resources into something that uses them (push the release
    image to ECR through the OIDC role, have the service write reports) or delete `infra/`. As it
    stands it is unused.

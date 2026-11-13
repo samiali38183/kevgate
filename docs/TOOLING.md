@@ -1,8 +1,8 @@
 # Tooling
 
-Two sets of tools: the ones installed on a Windows workstation for static validation, and the ones
-CI installs on Linux runners. Everything is pinned. Local installs are user-level binaries in
-`%USERPROFILE%/bin`. Each download was checked against the checksum the project publishes.
+Two sets of tools: the ones on my Windows workstation for static validation, and the ones CI
+installs on Linux runners. Everything is pinned. Local installs are user-level binaries in
+`%USERPROFILE%/bin`. I checked each download against the checksum the project publishes.
 
 ## Local (Windows, amd64), verified 2026-11-10
 
@@ -26,8 +26,8 @@ Python tools, each in its own virtualenv under a tools directory:
 | checkov | 3.4.3 |
 | sigma-cli | 4.0.0 (pySigma 2.1.0, Splunk backend 3.0.0 used to check rules convert) |
 
-Not installed locally: Docker, so no image build, no kind cluster, no LocalStack, no Semgrep,
-Bandit, pip-audit, gitleaks, kubescape or ZAP runs here. Those run in CI.
+Not installed locally: Docker, so there is no image build, kind cluster or LocalStack here, and
+no Semgrep, Bandit, pip-audit, gitleaks, kubescape or ZAP run. Those run in CI.
 
 ## CI (Linux amd64)
 

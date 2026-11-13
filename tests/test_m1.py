@@ -1,4 +1,4 @@
-"""M1 contract tests. Do not edit to make them pass; implement src/kevgate instead."""
+"""The first API contract tests. Change the code to satisfy them, not the tests."""
 from __future__ import annotations
 
 from pathlib import Path

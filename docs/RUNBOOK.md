@@ -68,7 +68,7 @@ exploited, which silently produces a wrong remediation queue.
 Severity warning. p95 over 500 ms on a route for 10 minutes.
 
 1. Which route? The alert label says. `/queue` cost grows with the number of findings; `/findings` with batch size.
-2. CPU throttling: `k top pod`, compare with the 500m limit. Memory near 256Mi suggests swapping behaviour in the SQLite page cache.
+2. CPU throttling: `k top pod`, compare with the 500m limit. Memory near the 256Mi limit points at the SQLite page cache.
 3. Request rate: the dashboard "Request rate by status" panel. A traffic spike is also the rate-limit alert's job.
 
 Remediation: raise limits, reduce batch size on the client, or plan the move to Postgres if the
@@ -107,8 +107,8 @@ Severity warning. Many 429 responses.
 Use when a key appears in a repo, a log, a chat, a CI artifact, or the forbidden-scope alert
 fires from an unexpected client.
 
-1. **Scope the key.** The key id is the first field of its line in the key file. Which scopes? `findings:write` lets someone inject false findings that reorder the queue; `queue:read` exposes the remediation list, which is a map of the organisation's unpatched weaknesses.
-2. **Contain.** Revoke now, investigate after:
+1. Scope the key. The key id is the first field of its line in the key file. Which scopes? `findings:write` lets someone inject false findings that reorder the queue; `queue:read` exposes the remediation list, which is a map of the organisation's unpatched weaknesses.
+2. Contain. Revoke now, investigate after:
    ```bash
    k get secret kevgate-api-keys -o jsonpath='{.data.api_keys}' | base64 -d > /tmp/keys.current
    grep -v '^<key_id>:' /tmp/keys.current > /tmp/keys.new          # remove the leaked line
@@ -116,11 +116,11 @@ fires from an unexpected client.
    k rollout restart deploy/kevgate                                  # key file is read at start
    shred -u /tmp/keys.current /tmp/keys.new
    ```
-3. **Issue a replacement** for the legitimate client: `kevgate keygen --scope <scopes> --key-id <new-id>`. Give the client the key; add only the hash line to the Secret.
-4. **Find the exposure window.** From the log: requests with that `key_id` between when it was created and when it was revoked, by `path` and `status`, and `POST /findings` volume. Failed requests log `client_ip` (see KevgateAuthFailureSpike); successful ones do not, so correlate timestamps with CNI or load balancer logs for the addresses that used the key successfully. Compare the queue with the last known good scanner import.
-5. **Check data integrity.** If the leaked key had `findings:write`, look for findings you did not import. Re-import the last good scanner export into a clean database if in doubt (`kevgate import-csv`), because injected findings can bury real ones.
-6. **Remove the source.** Delete the key from wherever it leaked (git history rewrite plus rotate, delete the log, purge the artifact). Rotation already happened; do the cleanup to stop the next leak.
-7. **Write it up.** Root cause (why did a plaintext key leave the client?), time to revoke, data touched, fix. Add a gitleaks rule if the key format was missed.
+3. Issue a replacement for the legitimate client: `kevgate keygen --scope <scopes> --key-id <new-id>`. Give the client the key; add only the hash line to the Secret.
+4. Find the exposure window. From the log: requests with that `key_id` between when it was created and when it was revoked, by `path` and `status`, and `POST /findings` volume. Failed requests log `client_ip` (see KevgateAuthFailureSpike); successful ones do not, so correlate timestamps with CNI or load balancer logs for the addresses that used the key successfully. Compare the queue with the last known good scanner import.
+5. Check data integrity. If the leaked key had `findings:write`, look for findings you did not import. Re-import the last good scanner export into a clean database if in doubt (`kevgate import-csv`), because injected findings can bury real ones.
+6. Remove the source. Delete the key from wherever it leaked (git history rewrite plus rotate, delete the log, purge the artifact). Rotation already happened. Clean up so the next leak does not happen the same way.
+7. Write it up. Root cause (why did a plaintext key leave the client?), time to revoke, data touched, fix. Add a gitleaks rule if the key format was missed.
 
 Keys are stored as SHA-256 hashes, so a stolen Secret does not give the attacker usable keys.
 That is why step 2 is a removal, not a hunt for plaintext.
@@ -130,12 +130,12 @@ That is why step 2 is a removal, not a hunt for plaintext.
 Use when the exec, ephemeral container or privileged-pod Sigma rules fire without a matching
 change ticket, or the pod shows unexpected processes or outbound traffic.
 
-1. **Confirm and preserve.** Identify who and when from the audit event (`user.username`, `sourceIPs`, `requestReceivedTimestamp`). Do not delete the pod yet.
+1. Confirm and preserve. Identify who and when from the audit event (`user.username`, `sourceIPs`, `requestReceivedTimestamp`). Do not delete the pod yet.
    ```bash
    k get pod <pod> -o yaml > pod-<ts>.yaml
    k logs <pod> --all-containers > pod-<ts>.log
    ```
-2. **Isolate without destroying evidence.** Label the pod so it leaves the Service and add a deny-all policy, then keep it for forensics:
+2. Isolate without destroying evidence. Label the pod so it leaves the Service and add a deny-all policy, then keep it for forensics:
    ```bash
    k label pod <pod> app.kubernetes.io/instance=quarantine --overwrite
    k apply -f - <<'EOF'
@@ -148,11 +148,11 @@ change ticket, or the pod shows unexpected processes or outbound traffic.
    EOF
    ```
    The Deployment replaces the removed pod with a clean one. (The chart already denies egress except DNS, so exfiltration over the network is limited to DNS.)
-3. **Assess what the pod could reach.** It has no service account token, no Kubernetes permissions, and a read-only root. Realistic exposure: the SQLite data on `/data`, the key-file hashes, and anything on the node reachable through a container escape. Check `k get pod <pod> -o jsonpath='{.spec.nodeName}'` and whether the node's other workloads need review.
-4. **Treat secrets as exposed.** Hashes only are in the pod, but rotate all keys anyway (leak playbook steps 2 and 3) if the attacker had a shell: they could have captured plaintext keys from request headers in memory.
-5. **Find how they got in.** Audit log for the user or token that issued the exec; check whether it is a human, a CI service account or a stolen token. Rotate that credential. Check for RBAC changes (`rolebindings` events are logged at RequestResponse).
-6. **Recover.** Deploy a known-good image by digest (`helm upgrade --set image.digest=sha256:...`) after verifying its signature with `cosign verify` (see `docs/PIPELINE.md`). Restore `/data` from a backup taken before the incident if integrity is in doubt.
-7. **Clean up.** Delete the quarantined pod and the quarantine policy once the evidence is copied off-cluster. Add or tighten the detection that was late.
+3. Assess what the pod could reach. It has no service account token, no Kubernetes permissions, and a read-only root. Realistic exposure: the SQLite data on `/data`, the key-file hashes, and anything on the node reachable through a container escape. Check `k get pod <pod> -o jsonpath='{.spec.nodeName}'` and whether the node's other workloads need review.
+4. Treat secrets as exposed. Hashes only are in the pod, but rotate all keys anyway (leak playbook steps 2 and 3) if the attacker had a shell: they could have captured plaintext keys from request headers in memory.
+5. Find how they got in. Audit log for the user or token that issued the exec; check whether it is a human, a CI service account or a stolen token. Rotate that credential. Check for RBAC changes (`rolebindings` events are logged at RequestResponse).
+6. Recover. Deploy a known-good image by digest (`helm upgrade --set image.digest=sha256:...`) after verifying its signature with `cosign verify` (see `docs/PIPELINE.md`). Restore `/data` from a backup taken before the incident if integrity is in doubt.
+7. Clean up. Delete the quarantined pod and the quarantine policy once the evidence is copied off-cluster. Add or tighten the detection that was late.
 
 Pointers: exec into the pod is MITRE ATT&CK T1609, escape to the host is T1611, secret
 collection is T1552.007. The rules are in `deploy/detections/`.

@@ -1,6 +1,6 @@
 # kevgate threat model
 
-Method: STRIDE per component. For each threat the tables list what is implemented in this repo (with the file that does it) and what risk remains. Scope is the application on `main`. Controls that belong to the container and cluster layer are listed under the container component as requirements the app is built to support, since that layer lives in `deploy/`.
+Method: STRIDE per component. For each threat the tables list what the repo implements (with the file that does it) and what risk remains. The scope is the application on `main`. Controls in the container and cluster layer live in `deploy/`, so they appear under the container component as things the app has to support.
 
 ## What is worth protecting
 
@@ -47,7 +47,7 @@ Assumptions: TLS is terminated before the pod (ingress or service mesh); the key
 | Information disclosure | Key file or a backup leaks | Only SHA-256 hashes are stored. Because the keys are high-entropy random strings, a fast hash is enough; a slow hash like scrypt would protect nothing extra and would cost CPU on every request | A leaked plaintext key stays valid until removed. There is no expiry, no last-used tracking, and revocation needs a restart |
 | Information disclosure | Keys end up in logs | Only `key_id` is logged; the access log has no headers or bodies; a test asserts the key never appears (`tests/test_api.py`) | Upstream proxies may log the `Authorization` header if misconfigured |
 | Tampering | Broken or edited key file grants unexpected access | Strict parser: unknown scopes, bad ids, bad hashes and duplicate ids abort startup (`auth.py: KeyStore.parse`) | Anyone who can write the key file can add an admin key; protect it as a secret |
-| Elevation of privilege | Service accidentally runs without auth in production | `KEVGATE_ENV=prod` without a key file, or with an empty one, refuses to start (`app.py: _load_keys`); dev mode logs a loud warning | Someone can still deploy with `KEVGATE_ENV=dev`. The Helm values should pin `prod` |
+| Elevation of privilege | Service runs without auth in production by mistake | `KEVGATE_ENV=prod` without a key file, or with an empty one, refuses to start (`app.py: _load_keys`); dev mode logs a loud warning | Someone can still deploy with `KEVGATE_ENV=dev`. The Helm values should pin `prod` |
 
 ## 3. Database (SQLite)
 
@@ -70,7 +70,7 @@ Assumptions: TLS is terminated before the pod (ingress or service mesh); the key
 
 ## 5. Container and runtime
 
-The image, chart and policies are built in `deploy/`. The app is written so those controls can be strict:
+The image, chart and policies are in `deploy/`. The app is written so those controls can be strict:
 
 | STRIDE | Threat | What the app does to support the control | Residual risk / owner |
 |---|---|---|---|
