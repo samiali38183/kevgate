@@ -28,11 +28,12 @@ how much to trust the rest: what is validated where, and what is unused or unpro
 | Pod Identity role assumption from EKS | no | | needs an AWS account and an EKS cluster |
 | Real storage class, node drain behaviour, HA | no | | kind is one node with local storage |
 
-All four CI workflows (`ci`, `security`, `deploy-kind`, `terraform`) have run green on GitHub
+The four CI workflows (`ci`, `security`, `deploy-kind`, `terraform`) have run green on GitHub
 Actions; the first run of each was not green and the problems it exposed are listed in
-`docs/PIPELINE.md` under "What the first CI run found". `release.yml` ran once, on tag `v0.1.0`,
-and every step succeeded. The signature and attestation of that image have not been verified
-independently (`cosign verify`, `gh attestation verify`), and nothing in the cluster enforces them.
+`docs/PIPELINE.md` under "What the first CI run found". `release.yml` ran for tags `v0.1.0` and
+`v0.1.1` and every step succeeded. The provenance attestation of the 0.1.1 image was verified with
+`gh attestation verify` from outside the workflow; `cosign verify` has not been run independently, and nothing
+in the cluster enforces either.
 
 ## What is unused or unproven
 
