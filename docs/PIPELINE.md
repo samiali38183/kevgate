@@ -1,6 +1,6 @@
 # Pipeline
 
-Five workflows in `.github/workflows/`. The aim is that a pull request cannot reach `main` with a
+Six workflows in `.github/workflows/`: the five below plus `lock-freshness.yml` (weekly check that `requirements.lock` is current, described under Lock file; it is scheduled and has not run yet). The aim is that a pull request cannot reach `main` with a
 known-vulnerable dependency, a leaked secret, a weakened pod spec or an unscanned image, and that
 a release carries proof of where it came from.
 
@@ -150,12 +150,11 @@ kind-netpol kind-audit` runs the kind job's steps by hand.
 
 ## Known limits
 
-- `release.yml` ran once, on tag `v0.1.0`, and every step succeeded. Nobody has independently run
-  `cosign verify` or `gh attestation verify` on that image, and nothing enforces the signature in a cluster.
+- `release.yml` ran for tags `v0.1.0` and `v0.1.1` and every step succeeded. On 2026-11-12 `gh attestation verify oci://ghcr.io/samiali38183/kevgate:0.1.1 --repo samiali38183/kevgate` succeeded from a machine outside the workflow (provenance only; `cosign verify` has not been run independently), and nothing enforces the signature in a cluster.
 - The kubescape step produces a report and does not gate. Its host scanner cannot start on kind
   (no node-agent), so only the manifest-level controls are scored: NSA 79.96, MITRE 77.73. No
   score threshold that means something for this chart has been chosen.
 - ZAP baseline is a passive scan plus a short spider. It is not an active scan, and an API without
   an OpenAPI import gives it little to crawl. Importing the OpenAPI document is the next step.
 - The Terraform job's no-drift plan after apply depends on LocalStack's fidelity. It passed on the
-  run below; if it ever flaps, that step should be removed rather than weakening the controls it checks.
+  last run on `main`; if it ever flaps, that step should be removed rather than weakening the controls it checks.

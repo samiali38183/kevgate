@@ -5,7 +5,35 @@
 [![deploy-kind](https://github.com/samiali38183/kevgate/actions/workflows/deploy-kind.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/deploy-kind.yml)
 [![terraform](https://github.com/samiali38183/kevgate/actions/workflows/terraform.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/terraform.yml)
 
-kevgate is a small vulnerability intake service. Scanner findings go in, and a remediation queue comes out, ranked by known exploitation (CISA KEV), exploit likelihood (EPSS), severity (CVSS) and how much the affected asset matters (asset criticality rating, ACR).
+kevgate is a small vulnerability intake service. Scanner findings go in, and a remediation queue comes out, ranked by known exploitation (CISA KEV), exploit likelihood (EPSS), severity (CVSS) and how much the affected asset matters (asset criticality rating, ACR). The service is small on purpose. The point of the repository is the packaging around it: authentication and rate limiting, a hardened container, a Helm chart, Terraform and a CI pipeline that scans and signs what it ships.
+
+| | |
+|---|---|
+| Ranking | KEV membership carries 0.40 of the score, so a KEV finding never ranks below a non-KEV one on the same asset; the weights are a design choice and have not been validated against outcomes |
+| Tests | 277 pytest tests, 99.92% branch coverage (CI floor 90%), `ruff` and `mypy --strict` clean, including Hypothesis property tests and tests that pin defects earlier tests missed |
+| Pipeline | CI runs SAST (Semgrep, Bandit), `pip-audit` on a hashed lock, gitleaks, checkov, Trivy on the image, a kind deploy with NetworkPolicy and Pod Security checks, a ZAP baseline scan, and Terraform against LocalStack ([pipeline](docs/PIPELINE.md)) |
+| Release | `v0.1.1` image on GHCR, signed with cosign (keyless) with provenance and SBOM attestations; `gh attestation verify` on it succeeded from outside the workflow |
+| Not done | nothing is deployed to a real AWS account, one replica with SQLite, see [Status and limits](#status-and-limits) |
+
+Try it (Python 3.11+):
+
+```bash
+python -m venv .venv && source .venv/bin/activate       # Windows: .venv\Scripts\activate
+pip install -e ".[dev]" && pytest -q                    # 277 tests
+KEVGATE_DB_PATH=./kevgate.db uvicorn kevgate.main:app --port 8000      # dev mode: auth off, a warning is logged
+```
+
+```
+$ curl -s -X POST localhost:8000/findings -H 'Content-Type: application/json' -d '[
+    {"cve":"CVE-2021-44228","asset":"web-01","acr":7,"cvss":10.0,"epss":0.97,"days_open":12},
+    {"cve":"CVE-2023-99999","asset":"db-01","acr":8,"cvss":9.8,"epss":0.02,"days_open":30}]'
+{"accepted":2}
+$ curl -s 'localhost:8000/queue?limit=3'
+[{"cve":"CVE-2021-44228","asset":"web-01",...,"kev":true,"risk":96.5},
+ {"cve":"CVE-2023-99999","asset":"db-01",...,"kev":false,"risk":42.9}]
+```
+
+The log4j finding is in the bundled sample KEV catalog and outranks a CVSS 9.8 on a more critical asset. The second CVE is invented. More requests, including authentication, are under [API](#api).
 
 ## Why it exists
 
