@@ -1,8 +1,10 @@
 # Pipeline
 
-Six workflows in `.github/workflows/`: the five below plus `lock-freshness.yml` (weekly check that `requirements.lock` is current, described under Lock file; it is scheduled and has not run yet). The aim is that a pull request cannot reach `main` with a
-known-vulnerable dependency, a leaked secret, a weakened pod spec or an unscanned image, and that
-a release carries proof of where it came from.
+Six workflows live in `.github/workflows/`: the five below, plus `lock-freshness.yml`, a weekly
+check that `requirements.lock` is current (see Lock file). It is scheduled and has not run yet.
+The goal is that a pull request cannot reach `main` with a known-vulnerable dependency, a leaked
+secret, a weakened pod spec or an unscanned image, and that a release carries proof of where it
+came from.
 
 ```mermaid
 flowchart TB
@@ -44,31 +46,31 @@ flowchart TB
 | `terraform.yml` | PR and push touching `infra/` | Terraform is formatted, valid and linted, and applies, matches its intended controls and destroys cleanly against LocalStack | any step fails |
 | `release.yml` | tag `v*.*.*` | The published image was scanned before and after push, is signed by this workflow's identity, and has provenance and an SBOM | scan fails, or signature verification of the pushed digest fails |
 
-## Design choices
+## How it is set up
 
-**Least privilege per job.** Each workflow starts with `permissions: {}`, and each job asks for
+Each workflow starts with `permissions: {}`, and each job asks for
 what it needs. Only the SARIF-uploading jobs get `security-events: write`; only `release.yml` gets
 `packages: write`, `id-token: write` and `attestations: write`. Checkouts use
 `persist-credentials: false`.
 
-**Third-party actions pinned by commit SHA**, with the tag in a comment. Tools that are not
+Third-party actions are pinned by commit SHA, with the tag in a comment. Tools that are not
 actions (kind, helm, trivy, gitleaks, promtool and so on) are installed by
-`deploy/scripts/install-tools.sh` from pinned versions with committed checksums, which keeps
-extra JavaScript with a job token out of the picture.
+`deploy/scripts/install-tools.sh` from pinned versions with committed checksums, so no extra
+JavaScript runs with the job token.
 
-**No secrets in the repo.** Each kind run generates a fresh API key with the image's own
+No secrets are in the repo. Each kind run generates a fresh API key with the image's own
 `kevgate keygen`, stores only the hash in the cluster Secret and masks the plaintext in logs. The
 key lives in the runner's temp directory and dies with the runner. LocalStack's `test`
 credentials are its documented dummy values and are annotated for checkov.
 
-**Gate at a stated threshold.** Trivy fails on HIGH and CRITICAL with `--ignore-unfixed`:
+Gates use fixed thresholds. Trivy fails on HIGH and CRITICAL with `--ignore-unfixed`:
 an unfixable base-image CVE should not block a merge, but it still appears in the SARIF and SBOM.
 ZAP's own exit code is coarse, so `deploy/scripts/zap-gate.sh` reads the JSON report and fails
 on any medium or higher alert whose rule id is not ignored in `deploy/zap/rules.tsv`. Every
 ignored rule has a reason in that file. The initial entries are informational or cookie rules
-that cannot apply to a cookie-less JSON API. The file is expected to need tuning as real runs accumulate.
+that cannot apply to a cookie-less JSON API. I expect to tune the file as more runs accumulate.
 
-**Lock file.** `requirements.lock` is committed. It was compiled by `deploy/scripts/lock.sh` with
+The lock file, `requirements.lock`, is committed. It was compiled by `deploy/scripts/lock.sh` with
 pip-tools (`--generate-hashes`) from `pyproject.toml` on a Linux runner with Python 3.12, so it
 matches the image. `ci` installs it with `--require-hashes` before the dev tools, `pip-audit`
 scans that exact file, the Docker build installs it with `--require-hashes`, and the SBOM
@@ -80,12 +82,12 @@ to a commit SHA and Dependabot updates the SHA and its version comment together)
 differ from the committed file. Dependabot does not recognise `requirements.lock` as an input, so
 the workflow is the check that covers it.
 
-**Real enforcement tests.** `deploy-kind.yml` installs Calico because the default kind CNI
+Enforcement is tested for real. `deploy-kind.yml` installs Calico because the default kind CNI
 (kindnet) does not enforce NetworkPolicy. `netpol-test.sh` requires an unlabelled pod to fail to
 connect, a labelled pod to succeed, the kevgate pod to fail an outbound connection to the
 internet, and a privileged pod to be rejected at admission.
 
-**Release order.** Build locally, scan, then push; sign the digest that was pushed, then verify
+Release order: build locally, scan, then push; sign the digest that was pushed, then verify
 the signature against the workflow identity before the job succeeds. Signing is keyless: the
 certificate comes from GitHub's OIDC token and is logged in Rekor, so there is no signing key to
 protect or rotate. To verify an image yourself:
@@ -97,7 +99,7 @@ cosign verify ghcr.io/samiali38183/kevgate@sha256:<digest> \
 gh attestation verify oci://ghcr.io/samiali38183/kevgate@sha256:<digest> --repo samiali38183/kevgate
 ```
 
-**SARIF only where it works.** Code scanning upload is skipped for private repositories, where
+SARIF upload only where it works: code scanning upload is skipped for private repositories, where
 GitHub does not offer it for free; the SARIF is kept as an artifact either way.
 
 ## Validated locally before pushing
@@ -123,8 +125,8 @@ What these cannot show is in the table at the top of `docs/DEPLOYMENT.md`.
 
 ## What the first CI run found
 
-The first run of `security` and `deploy-kind` failed, and `terraform` had not yet run. Fixes, each
-verified by a green run:
+The first run of `security` and `deploy-kind` failed, and `terraform` had not yet run. Each fix
+was confirmed by a green run:
 
 | Finding | Cause | Fix |
 |---|---|---|
@@ -150,11 +152,12 @@ kind-netpol kind-audit` runs the kind job's steps by hand.
 
 ## Known limits
 
-- `release.yml` ran for tags `v0.1.0` and `v0.1.1` and every step succeeded. On 2026-11-12 `gh attestation verify oci://ghcr.io/samiali38183/kevgate:0.1.1 --repo samiali38183/kevgate` succeeded from a machine outside the workflow (provenance only; `cosign verify` has not been run independently), and nothing enforces the signature in a cluster.
+- `release.yml` ran for tags `v0.1.0` and `v0.1.1`, and every step succeeded. On 2026-11-12 `gh attestation verify oci://ghcr.io/samiali38183/kevgate:0.1.1 --repo samiali38183/kevgate` succeeded from a machine outside the workflow. That checks provenance only. I have not run `cosign verify` independently, and nothing enforces the signature in a cluster.
 - The kubescape step produces a report and does not gate. Its host scanner cannot start on kind
   (no node-agent), so only the manifest-level controls are scored: NSA 79.96, MITRE 77.73. No
   score threshold that means something for this chart has been chosen.
 - ZAP baseline is a passive scan plus a short spider. It is not an active scan, and an API without
   an OpenAPI import gives it little to crawl. Importing the OpenAPI document is the next step.
-- The Terraform job's no-drift plan after apply depends on LocalStack's fidelity. It passed on the
-  last run on `main`; if it ever flaps, that step should be removed rather than weakening the controls it checks.
+- The Terraform job's no-drift plan after apply depends on how faithfully LocalStack behaves. It
+  passed on the last run on `main`. If it starts to flap, I would drop that step rather than
+  weaken the controls it checks.

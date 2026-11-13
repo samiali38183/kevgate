@@ -5,15 +5,15 @@
 [![deploy-kind](https://github.com/samiali38183/kevgate/actions/workflows/deploy-kind.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/deploy-kind.yml)
 [![terraform](https://github.com/samiali38183/kevgate/actions/workflows/terraform.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/terraform.yml)
 
-kevgate is a small vulnerability intake service. Scanner findings go in, and a remediation queue comes out, ranked by known exploitation (CISA KEV), exploit likelihood (EPSS), severity (CVSS) and how much the affected asset matters (asset criticality rating, ACR). The service is small on purpose. The point of the repository is the packaging around it: authentication and rate limiting, a hardened container, a Helm chart, Terraform and a CI pipeline that scans and signs what it ships.
+kevgate takes scanner findings in and gives back a remediation queue, ranked by whether the CVE is known to be exploited (CISA KEV), how likely exploitation is (EPSS), severity (CVSS) and how much the affected asset matters (asset criticality rating, ACR). The service is small on purpose. Most of the repository is the packaging around it: API keys and rate limiting, a locked-down container, a Helm chart, Terraform, and a CI pipeline that scans and signs what it ships.
 
 | | |
 |---|---|
-| Ranking | KEV membership carries 0.40 of the score, so a KEV finding never ranks below a non-KEV one on the same asset; the weights are a design choice and have not been validated against outcomes |
-| Tests | 277 pytest tests, 99.92% branch coverage (CI floor 90%), `ruff` and `mypy --strict` clean, including Hypothesis property tests and tests that pin defects earlier tests missed |
-| Pipeline | CI runs SAST (Semgrep, Bandit), `pip-audit` on a hashed lock, gitleaks, checkov, Trivy on the image, a kind deploy with NetworkPolicy and Pod Security checks, a ZAP baseline scan, and Terraform against LocalStack ([pipeline](docs/PIPELINE.md)) |
-| Release | `v0.1.1` image on GHCR, signed with cosign (keyless) with provenance and SBOM attestations; `gh attestation verify` on it succeeded from outside the workflow |
-| Not done | nothing is deployed to a real AWS account, one replica with SQLite, see [Status and limits](#status-and-limits) |
+| Ranking | KEV membership carries 0.40 of the score, so a KEV finding never ranks below a non-KEV one on the same asset. The weights are my choice and I have not checked them against remediation outcomes. |
+| Tests | 277 pytest tests, 99.92% branch coverage (CI floor 90%), `ruff` and `mypy --strict` clean. They include Hypothesis property tests and tests that pin defects earlier tests missed. |
+| Pipeline | CI runs Semgrep, Bandit, `pip-audit` on a hashed lock, gitleaks, checkov, Trivy on the image, a kind deploy with NetworkPolicy and Pod Security checks, a ZAP baseline scan, and Terraform against LocalStack ([pipeline](docs/PIPELINE.md)). |
+| Release | `v0.1.1` image on GHCR, signed with cosign (keyless), with provenance and SBOM attestations. `gh attestation verify` passed from a machine outside the workflow. |
+| Not done | Nothing is deployed to a real AWS account. The service runs as one replica on SQLite. See [Status and limits](#status-and-limits). |
 
 Try it (Python 3.11+):
 
@@ -33,19 +33,17 @@ $ curl -s 'localhost:8000/queue?limit=3'
  {"cve":"CVE-2023-99999","asset":"db-01",...,"kev":false,"risk":42.9}]
 ```
 
-The log4j finding is in the bundled sample KEV catalog and outranks a CVSS 9.8 on a more critical asset. The second CVE is invented. More requests, including authentication, are under [API](#api).
+The log4j CVE is in the bundled sample KEV catalog, so it outranks a CVSS 9.8 on a more critical asset. The second CVE is made up. More requests, including authentication, are under [API](#api).
 
 ## Why it exists
 
-A raw scanner export sorts by CVSS, which puts a theoretical 9.8 ahead of a 7.5 that attackers are using right now. Membership in the CISA Known Exploited Vulnerabilities (KEV) catalog is the strongest prioritization signal available, so the service makes it the dominant factor and still uses EPSS, CVSS and asset criticality to order everything else. It applies the same prioritization idea used in vulnerability-management work, as a small service with an API.
-
-The service itself is deliberately small. The repository also serves as a worked example of shipping such a service the way a production team would: tested, authenticated, rate limited, observable, threat modeled, and packaged with a hardened container, Kubernetes and Terraform.
+A raw scanner export sorts by CVSS, which puts a theoretical 9.8 above a 7.5 that attackers are using today. Membership in the CISA Known Exploited Vulnerabilities (KEV) catalog is the strongest signal I know of, so it dominates the score, and EPSS, CVSS and asset criticality order everything else. Vulnerability-management teams use the same idea. I wrapped it in a small API so I would have something real to test, authenticate, rate limit, monitor, threat model and package.
 
 ## Status and limits
 
-- Demonstration scope. One replica, SQLite on one volume, `Recreate` rollouts. That is a documented limitation, not a production design; the changes it would need are listed in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#what-would-change-for-production).
-- Nothing is deployed to a real AWS account. The Terraform resources (ECR, reports bucket, KMS key, workload and CI roles) have no consumer in the deployed path: the service does not call AWS and releases go to GHCR. They were only applied to LocalStack.
-- The scoring weights are a stated design choice. They have not been evaluated against remediation outcomes.
+- One replica, SQLite on one volume, `Recreate` rollouts. That is a limitation, not a production design. [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#what-would-change-for-production) lists what would have to change.
+- Nothing is deployed to a real AWS account. The Terraform (ECR, reports bucket, KMS key, workload and CI roles) has no consumer: the service does not call AWS and releases go to GHCR. I only applied it to LocalStack.
+- The scoring weights have not been evaluated against remediation outcomes.
 
 ## How scoring works
 
@@ -53,7 +51,7 @@ The service itself is deliberately small. The repository also serves as a worked
 risk = 100 * (0.40 * kev + 0.25 * acr/8 + 0.20 * epss + 0.20 * cvss/10) / 1.05
 ```
 
-`kev` is 1 if the CVE is in the loaded KEV catalog, else 0. The result is rounded to one decimal and always falls in 0..100. Because the KEV weight (0.40) equals the combined EPSS and CVSS weights, a KEV finding never scores below a non-KEV finding on an asset with the same ACR. The only tie is the degenerate case of a KEV finding with CVSS 0 and EPSS 0 against a non-KEV finding with CVSS 10 and EPSS 1, and the queue breaks that tie in favor of KEV. The queue order is risk, then KEV, then EPSS, then CVSS, all descending.
+`kev` is 1 if the CVE is in the loaded KEV catalog, else 0. The result is rounded to one decimal and always falls in 0..100. The KEV weight (0.40) equals the EPSS and CVSS weights combined, so a KEV finding never scores below a non-KEV finding on an asset with the same ACR. The only tie is a KEV finding with CVSS 0 and EPSS 0 against a non-KEV finding with CVSS 10 and EPSS 1, and the queue puts KEV first. Queue order is risk, then KEV, then EPSS, then CVSS, all descending.
 
 ## Quick start
 
@@ -186,13 +184,13 @@ Module map: `app.py` (factory and routes), `auth.py`, `clientip.py`, `ratelimit.
 
 ## Tests and quality
 
-Numbers from a local run at the time of writing (Windows, Python 3.12.2). The `ci` workflow runs the same suite on Linux with Python 3.11 and 3.12.
+Numbers from a local run on 2026-11-13 (Windows, Python 3.12.2). The `ci` workflow runs the same suite on Linux with Python 3.11 and 3.12.
 
-- `pytest`: 277 tests passed, including the original M1 contract tests unchanged, Hypothesis property tests for the scoring bounds and KEV ordering, the full auth matrix, rate limiting and the failed-authentication limiter, body and count limits, CSV edge cases, KEV refresh with a mocked network, repository upserts, and readiness checks including a deliberately corrupted database file.
-- Coverage: 1092 statements, 0 missed; 99.92% with branch coverage on (one partial branch).
+- `pytest`: 277 tests pass. They cover the first API contract tests (unchanged), Hypothesis properties for the scoring bounds and KEV ordering, the auth matrix, rate limiting and the failed-authentication limiter, body and count limits, CSV edge cases, KEV refresh against a mocked network, repository upserts, and readiness with a deliberately corrupted database file.
+- Coverage: 1092 statements, 0 missed, 99.92% with branch coverage (one partial branch).
 - `ruff check .` and `ruff format --check .`: clean.
 - `mypy --strict src`: no issues in 16 source files.
-- Infrastructure tests: `promtool test rules` passes; `terraform test` (OIDC trust policy) passes 4 runs.
+- Infrastructure tests: `promtool test rules` passes, and `terraform test` on the OIDC trust policy passes 4 runs.
 
 ```bash
 make lint && make type && make test
@@ -200,27 +198,21 @@ make lint && make type && make test
 
 ## Deployment
 
-The service ships as a hardened container, a Helm chart, Terraform for AWS, and a GitHub Actions
-security pipeline. Start with [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md); the pipeline is described in
-[docs/PIPELINE.md](docs/PIPELINE.md), alerts and incident playbooks in [docs/RUNBOOK.md](docs/RUNBOOK.md),
-and the threat model in [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
+The service ships as a container image, a Helm chart, Terraform for AWS and a GitHub Actions security pipeline. Start with [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). The pipeline is in [docs/PIPELINE.md](docs/PIPELINE.md), alerts and incident playbooks in [docs/RUNBOOK.md](docs/RUNBOOK.md), and the threat model in [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
 
-Coverage numbers do not show whether a test would notice a defect, so `tests/test_mutation_kills.py` pins six behaviors that earlier survived deliberate defects (early-exit key comparison, `==` instead of `hmac.compare_digest`, `BEGIN` instead of `BEGIN IMMEDIATE`, a body counter that kept only the last chunk, CSV merge taking the minimum CVSS, an upsert that skipped `epss`).
+Coverage does not show whether a test would notice a defect. `tests/test_mutation_kills.py` pins six behaviors that earlier survived deliberate defects: early-exit key comparison, `==` instead of `hmac.compare_digest`, `BEGIN` instead of `BEGIN IMMEDIATE`, a body counter that kept only the last chunk, a CSV merge that took the minimum CVSS, and an upsert that skipped `epss`.
 
-What has actually been run (and where) is written down in those docs. Static validation (helm lint,
-kubeconform, terraform validate, checkov, trivy config, promtool, actionlint) was run locally and is
-repeated in CI. The image build, kind deployment, LocalStack apply and DAST scans run in GitHub
-Actions and all four workflows above are green on `main`. Nothing is deployed to a real AWS account, and the Terraform has no consumer in the deployed path (see Status and limits).
+The docs say where each check ran. Helm lint, kubeconform, terraform validate, checkov, trivy config, promtool and actionlint ran on my machine and run again in CI. The image build, kind deployment, LocalStack apply and ZAP scan only run in GitHub Actions. The `ci`, `security` and `deploy-kind` workflows are green on `main`. `terraform` only runs when `infra/` changes, and its last run (2026-11-11) was green.
 
-Results from the last green runs:
+Results from the latest `security` and `deploy-kind` runs on `main`:
 
-- Semgrep (`p/python`, `p/owasp-top-ten`): 160 rules on 17 files, 0 findings. Bandit at medium and above: 0 findings.
-- `pip-audit` on the hashed lock: no known vulnerabilities. Trivy on the built image: 0 fixable HIGH or CRITICAL; the SBOM lists 104 components.
-- checkov: 0 failed checks across the Dockerfile (105 passed), the two rendered chart variants (181) and Terraform (138, 13 justified skips).
-- kind with Calico: 12 smoke checks, NetworkPolicy ingress and egress enforcement, Pod Security `restricted` rejects a privileged pod, and the 3 Sigma-targeted audit events are present in the API server audit log.
-- ZAP baseline: 67 rules pass, 0 warnings, 0 failures; the gate found no medium or higher alert.
+- Semgrep (`p/python`, `p/owasp-top-ten`): 160 rules, 0 findings. Bandit at medium and above: 0 findings.
+- `pip-audit` on the hashed lock: no known vulnerabilities. Trivy on the built image: 0 fixable HIGH or CRITICAL. The SBOM lists 104 components.
+- checkov: 0 failed checks on the Dockerfile (105 passed), the two rendered chart variants (181) and Terraform (138, 13 skipped with a reason).
+- kind with Calico: 12 smoke checks pass, NetworkPolicy ingress and egress are enforced, and Pod Security `restricted` rejects a privileged pod.
+- ZAP baseline: 67 rules pass, 0 warnings, 0 failures, and the gate found no medium or higher alert.
 - kubescape (report only, not a gate): NSA 79.96, MITRE 77.73, overall 86.
-- LocalStack: 20 resources applied, verified through the S3, KMS and IAM APIs, a second plan shows no drift, destroy succeeds.
+- LocalStack: 20 resources applied and checked through the S3, KMS and IAM APIs. A second plan shows no drift and destroy succeeds.
 
 ## License
 

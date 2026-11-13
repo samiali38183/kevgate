@@ -1,6 +1,6 @@
 # ZAP baseline rule tuning. Format: <rule id> <TAB> <IGNORE|WARN|FAIL> <TAB> <reason>
 # The CI gate (deploy/scripts/zap-gate.sh) fails on any alert of risk Medium or higher that is not
-# IGNOREd here. An entry needs a reason a reviewer can disagree with.
+# IGNOREd here. Every entry needs a reason someone could argue with.
 #
 # Informational rules that fire on any JSON API and carry no action for this service:
 10049	IGNORE	(Storable and Cacheable Content) informational; API responses carry no secrets and the auth header is required for data
