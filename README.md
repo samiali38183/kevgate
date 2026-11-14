@@ -9,7 +9,7 @@ kevgate takes scanner findings in and gives back a remediation queue, ranked by 
 
 | | |
 |---|---|
-| Ranking | KEV membership carries 0.40 of the score, so a KEV finding never ranks below a non-KEV one on the same asset. The weights are my choice and I have not checked them against remediation outcomes. |
+| Ranking | KEV membership carries 0.40 of the score, so a KEV finding never ranks below a non-KEV one on the same asset. The weights are my own choice. |
 | Tests | 277 pytest tests, 99.92% branch coverage (CI floor 90%), `ruff` and `mypy --strict` clean. They include Hypothesis property tests and tests that pin defects earlier tests missed. |
 | Pipeline | CI runs Semgrep, Bandit, `pip-audit` on a hashed lock, gitleaks, checkov, Trivy on the image, a kind deploy with NetworkPolicy and Pod Security checks, a ZAP baseline scan, and Terraform against LocalStack ([pipeline](docs/PIPELINE.md)). |
 | Release | `v0.1.1` image on GHCR, signed with cosign (keyless), with provenance and SBOM attestations. `gh attestation verify` passed from a machine outside the workflow. |
@@ -186,7 +186,7 @@ Module map: `app.py` (factory and routes), `auth.py`, `clientip.py`, `ratelimit.
 
 Numbers from a local run on 2026-11-13 (Windows, Python 3.12.2). The `ci` workflow runs the same suite on Linux with Python 3.11 and 3.12.
 
-- `pytest`: 277 tests pass. They cover the first API contract tests (unchanged), Hypothesis properties for the scoring bounds and KEV ordering, the auth matrix, rate limiting and the failed-authentication limiter, body and count limits, CSV edge cases, KEV refresh against a mocked network, repository upserts, and readiness with a deliberately corrupted database file.
+- `pytest`: 277 tests pass. They cover the original API contract tests, Hypothesis properties for the scoring bounds and KEV ordering, the auth matrix, rate limiting and the failed-authentication limiter, body and count limits, CSV edge cases, KEV refresh against a mocked network, repository upserts, and readiness with a deliberately corrupted database file.
 - Coverage: 1092 statements, 0 missed, 99.92% with branch coverage (one partial branch).
 - `ruff check .` and `ruff format --check .`: clean.
 - `mypy --strict src`: no issues in 16 source files.
