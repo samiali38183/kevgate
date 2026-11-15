@@ -5,47 +5,13 @@
 [![deploy-kind](https://github.com/samiali38183/kevgate/actions/workflows/deploy-kind.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/deploy-kind.yml)
 [![terraform](https://github.com/samiali38183/kevgate/actions/workflows/terraform.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/terraform.yml)
 
-**kevgate turns a vulnerability scanner export into a fix-first list, putting the flaws attackers are known to exploit at the top, and ships with the security pipeline a production service needs.**
+kevgate is a small FastAPI service that takes scanner findings and returns a fix-first queue. A scanner export is usually sorted by CVSS, which puts a theoretical 9.8 above a 7.5 that attackers are using today. kevgate ranks by whether the CVE is in CISA's Known Exploited Vulnerabilities (KEV) catalog first, then asset criticality, EPSS and CVSS.
+
+The ranking is the easy part. I wanted to see what it takes to run even a small security service properly, so most of the repository is the surrounding work: hashed API keys with scopes, rate limiting, a locked-down container, a Helm chart, a threat model, and a CI pipeline that scans the code and image and signs what it publishes. The same score is also used in [kevgate-admit](https://github.com/samiali38183/kevgate-admit), a Kubernetes admission webhook, and in [kev-risk-prioritization](https://github.com/samiali38183/kev-risk-prioritization), the standard-library case study of the idea.
 
 ![Two panels. Left: ranking weights read from the code, 0.40 for being in CISA's Known Exploited Vulnerabilities list, 0.25 asset importance, 0.20 exploit likelihood (EPSS), 0.20 severity (CVSS). Right: 12 checks all green on the latest main run, including 298 tests at 99.93% branch coverage, Semgrep, Bandit, gitleaks, pip-audit, checkov, Trivy, a kind cluster deploy with NetworkPolicy and Pod Security checks, and an OWASP ZAP scan.](docs/img/hero.png)
 
-*298 tests at 99.93% branch coverage, plus 11 more checks (type checks, scanners, a cluster deploy), all green on main. Weights are my own choice and have not been tested against remediation outcomes.*
-
-**What it does, in plain terms.** A scanner export lists thousands of flaws, usually sorted by a severity score. That puts a theoretical 9.8 above a 7.5 that attackers are using today. kevgate adds what the severity score lacks: whether the flaw is on the US government's list of vulnerabilities being exploited in the wild, how likely exploitation is, and how important the affected machine is. It returns the list in the order to fix them. Most of this repository is the packaging around that small service: API keys, rate limiting, a locked-down container, a Helm chart, Terraform and a CI pipeline that scans and signs what it ships.
-
-## Real-data run
-
-**On a real scan of four old public container images, CVSS order buries the flaws attackers are using; kevgate puts them first.** The 1,112 findings include 10 that are on CISA's Known Exploited Vulnerabilities list. Sorted by CVSS alone, 0.9 of those 10 are expected in the top 50 (averaged over random tie orders); kevgate puts all 10 in the top 10. That is partly by design, since KEV is a score input, and it is one run with hand-chosen weights that have not been checked against remediation outcomes.
-
-![Left: for each of the 10 exploited findings, the grey marker shows where a CVSS-only sort puts it, between about rank 2 and rank 610, and the red dot shows kevgate's rank, 1 to 10. Right: exploited findings found in the top 10, 25, 50 and 100 positions, CVSS only 0.15, 0.4, 0.86 and 1.75, kevgate 10 each.](docs/img/real-run.png)
-
-Reproduce it from the saved inputs (the scanner reports, the KEV catalog and the EPSS rows are committed, with hashes and sources in the manifest):
-
-```bash
-pip install -e ".[dev]" matplotlib pillow
-python scripts/real_run_analyze.py && python scripts/make_real_run.py
-```
-
-| Ordering | KEV in top 10 | top 25 | top 50 | top 100 |
-|---|---|---|---|---|
-| CVSS only (mean of 1,000 tie orders) | 0.15 | 0.40 | 0.86 | 1.75 |
-| kevgate | 10 | 10 | 10 | 10 |
-
-Asset importance did not change the result here: even the six exploited findings on the image I rated least important outrank everything on the image I rated most important. Inputs, method and limits (the run is circular on KEV and EPSS, ACR is assumed, and Trivy missed one KEV entry on `httpd:2.4.49`) are in [docs/real-run](docs/real-run/README.md). The run also added `kevgate import-trivy`, so a Trivy JSON report loads directly.
-
-## Technical overview
-
-kevgate takes scanner findings in and gives back a remediation queue, ranked by whether the CVE is known to be exploited (CISA KEV), how likely exploitation is (EPSS), severity (CVSS) and how much the affected asset matters (asset criticality rating, ACR). The service is small on purpose. Most of the repository is the packaging around it: API keys and rate limiting, a locked-down container, a Helm chart, Terraform, and a CI pipeline that scans and signs what it ships.
-
-| | |
-|---|---|
-| Ranking | KEV membership carries 0.40 of the score, so a KEV finding never ranks below a non-KEV one on the same asset. The weights are my own choice. |
-| Tests | 298 pytest tests, 99.93% branch coverage (CI floor 90%), `ruff` and `mypy --strict` clean. They include Hypothesis property tests and tests that pin defects earlier tests missed. |
-| Pipeline | CI runs Semgrep, Bandit, `pip-audit` on a hashed lock, gitleaks, checkov, Trivy on the image, a kind deploy with NetworkPolicy and Pod Security checks, a ZAP baseline scan, and Terraform against LocalStack ([pipeline](docs/PIPELINE.md)). |
-| Release | `v0.1.1` image on GHCR, signed with cosign (keyless), with provenance and SBOM attestations. `gh attestation verify` passed from a machine outside the workflow. |
-| Not done | Nothing is deployed to a real AWS account. The service runs as one replica on SQLite. See [Status and limits](#status-and-limits). |
-
-Try it (Python 3.11+):
+## Try it
 
 ```bash
 python -m venv .venv && source .venv/bin/activate       # Windows: .venv\Scripts\activate
@@ -63,187 +29,34 @@ $ curl -s 'localhost:8000/queue?limit=3'
  {"cve":"CVE-2023-99999","asset":"db-01",...,"kev":false,"risk":42.9}]
 ```
 
-The log4j CVE is in the bundled sample KEV catalog, so it outranks a CVSS 9.8 on a more critical asset. The second CVE is made up. More requests, including authentication, are under [API](#api).
+The log4j CVE is in the bundled sample KEV catalog, so it outranks a CVSS 9.8 on a more critical asset. The second CVE is made up. With `KEVGATE_ENV=prod` the service refuses to start without a key file.
 
-## Why it exists
+## Real-data run
 
-A raw scanner export sorts by CVSS, which puts a theoretical 9.8 above a 7.5 that attackers are using today. Membership in the CISA Known Exploited Vulnerabilities (KEV) catalog is the strongest signal I know of, so it dominates the score, and EPSS, CVSS and asset criticality order everything else. Vulnerability-management teams use the same idea. I wrapped it in a small API so I would have something real to test, authenticate, rate limit, monitor, threat model and package.
+I ran Trivy on four old public container images (`vulnerables/web-dvwa`, `mysql:5.6`, `tomcat:8.5.50`, `httpd:2.4.49`) and loaded the result with the live KEV catalog and EPSS scores. The 1,112 findings include 10 on the KEV list. Sorted by CVSS alone, 0.9 of those 10 are expected in the top 50 (averaged over random tie orders); kevgate puts all 10 in the top 10. That is partly because KEV is a score input. It is also one run, and the weights are my own choice and have not been checked against remediation outcomes.
 
-## Status and limits
+![Left: for each of the 10 exploited findings, the grey marker shows where a CVSS-only sort puts it, between about rank 2 and rank 610, and the red dot shows kevgate's rank, 1 to 10. Right: exploited findings found in the top 10, 25, 50 and 100 positions, CVSS only 0.15, 0.4, 0.86 and 1.75, kevgate 10 each.](docs/img/real-run.png)
 
-- One replica, SQLite on one volume, `Recreate` rollouts. That is a limitation, not a production design. [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#what-would-change-for-production) lists what would have to change.
-- Nothing is deployed to a real AWS account. The Terraform (ECR, reports bucket, KMS key, workload and CI roles) has no consumer: the service does not call AWS and releases go to GHCR. I only applied it to LocalStack.
-- The scoring weights have not been evaluated against remediation outcomes.
-
-## How scoring works
-
-```
-risk = 100 * (0.40 * kev + 0.25 * acr/8 + 0.20 * epss + 0.20 * cvss/10) / 1.05
-```
-
-`kev` is 1 if the CVE is in the loaded KEV catalog, else 0. The result is rounded to one decimal and always falls in 0..100. The KEV weight (0.40) equals the EPSS and CVSS weights combined, so a KEV finding never scores below a non-KEV finding on an asset with the same ACR. The only tie is a KEV finding with CVSS 0 and EPSS 0 against a non-KEV finding with CVSS 10 and EPSS 1, and the queue puts KEV first. Queue order is risk, then KEV, then EPSS, then CVSS, all descending.
-
-## Quick start
+The inputs are committed with hashes and sources, so the figure can be redrawn without a network:
 
 ```bash
-python -m venv .venv && source .venv/Scripts/activate   # .venv/bin/activate on Linux/macOS
-pip install -e ".[dev]"
-make test        # or: pytest --cov=kevgate
-
-# Dev server: no key file, so auth is disabled and a warning is logged
-KEVGATE_DB_PATH=./kevgate.db uvicorn kevgate.main:app --port 8000
+pip install -e ".[dev]" matplotlib pillow
+python scripts/real_run_analyze.py && python scripts/make_real_run.py
 ```
 
-With authentication on:
+Method, per-ordering tables and the circularity of the run are in [docs/real-run](docs/real-run/README.md). The run added `kevgate import-trivy`, which loads a Trivy JSON report directly.
 
-```bash
-kevgate keygen --scope findings:write --scope queue:read --key-id scanner
-# key:  kvg_...        give this to the client now, it is never shown again
-# line: scanner:findings:write,queue:read:<sha256>
+## What is in the repository
 
-echo 'scanner:findings:write,queue:read:<sha256 from the line above>' >> keys.txt
-KEVGATE_ENV=prod KEVGATE_DB_PATH=./kevgate.db KEVGATE_API_KEYS_FILE=./keys.txt \
-  uvicorn kevgate.main:app --port 8000
-```
+- `src/kevgate/`: the service (routes, auth, rate limiting, SQLite repository, CSV and Trivy importers, KEV refresh).
+- `deploy/`, `infra/terraform/`: Helm chart, kind smoke tests, Prometheus rules, and Terraform for AWS resources.
+- `docs/`: [reference](docs/REFERENCE.md) (scoring, API summary, configuration, security controls, test and scan results), [threat model](docs/THREAT_MODEL.md), [pipeline](docs/PIPELINE.md), [deployment](docs/DEPLOYMENT.md), [runbook](docs/RUNBOOK.md).
 
-## API
+The `v0.1.1` image on GHCR is signed with cosign (keyless) and carries provenance and SBOM attestations; `gh attestation verify` passed from a machine outside the workflow.
 
-Full reference with request and response examples: [docs/API.md](docs/API.md).
+## Limits
 
-| Method | Path | Scope | What it does |
-|---|---|---|---|
-| GET | `/healthz` | none | Liveness. Always 200 if the process is serving. |
-| GET | `/readyz` | none | 200 if the database answers, accepts a (rolled-back) write and passes a quick integrity check, its directory is writable with headroom, and the KEV catalog is loaded; else 503. |
-| GET | `/metrics` | none | Prometheus text format. |
-| POST | `/findings` | `findings:write` | JSON list of up to 1000 findings. Upsert on (cve, asset). 201 `{"accepted": n}`. |
-| POST | `/findings/import` | `findings:write` | Nessus/Tenable CSV export as `text/csv`. 201 `{"accepted": n, "skipped": m}`. |
-| GET | `/queue?limit=&kev_only=&asset=` | `queue:read` | Ranked queue. `limit` 1..100, default 10. |
-| GET | `/findings/{cve}` | `queue:read` | Every asset with that CVE, scored. 404 if none. |
-| DELETE | `/findings/{cve}?asset=` | `admin` | Remove one finding. 204, or 404 if it does not exist. |
-| GET | `/stats` | `queue:read` | KEV vs non-KEV counts and mean CVSS, EPSS and days open, plus top assets by total risk. |
-
-`admin` implies every other scope.
-
-```bash
-KEY=kvg_...   # a key with findings:write and queue:read
-curl -s -X POST localhost:8000/findings -H "Authorization: Bearer $KEY" \
-  -H 'Content-Type: application/json' \
-  -d '[{"cve":"CVE-2021-44228","asset":"web-01","acr":7,"cvss":10.0,"epss":0.97,"days_open":12}]'
-# {"accepted":1}
-
-curl -s -X POST 'localhost:8000/findings/import?default_acr=6' -H "Authorization: Bearer $KEY" \
-  -H 'Content-Type: text/csv' --data-binary @tests/fixtures/tenable_export.csv
-# {"accepted":5,"skipped":2}
-
-curl -s 'localhost:8000/queue?limit=3&kev_only=true' -H "Authorization: Bearer $KEY"
-curl -s localhost:8000/findings/CVE-2021-34527 -H "Authorization: Bearer $KEY"
-curl -s localhost:8000/stats -H "Authorization: Bearer $KEY"
-curl -s -X DELETE 'localhost:8000/findings/CVE-2021-44228?asset=web-01' -H "Authorization: Bearer $ADMIN_KEY"
-curl -s localhost:8000/readyz
-```
-
-## CLI
-
-| Command | What it does |
-|---|---|
-| `kevgate serve [--host] [--port]` | Runs uvicorn with the server header and the duplicate access log turned off. |
-| `kevgate keygen --scope S [--scope S] [--key-id ID]` | Prints a new key once, plus the `key_id:scopes:sha256` line for the key file. |
-| `kevgate import-csv FILE [--default-acr N] [--db PATH]` | Loads a scanner CSV straight into the database, in batches, with no 1000-finding cap. |
-| `kevgate import-trivy FILE [--default-acr N] [--epss-file CSV] [--db PATH]` | Loads a `trivy image --format json` report. The asset is the image name; CVSS comes from the report, EPSS from a FIRST CSV (0.0 if absent), `days_open` is 0. Non-CVE IDs and findings with no CVSS are skipped and counted. |
-| `kevgate kev-refresh [--output PATH] [--url URL] [--timeout S]` | Downloads the CISA KEV feed over HTTPS, validates it and atomically replaces the local file. The service loads KEV at startup, so restart it afterwards. |
-
-## Configuration
-
-| Variable | Default | Notes |
-|---|---|---|
-| `KEVGATE_ENV` | `dev` | `dev` or `prod`. Prod disables `/docs`, `/redoc` and `/openapi.json`, and refuses to start without a key file. |
-| `KEVGATE_DB_PATH` | `/data/kevgate.db` | SQLite file. The only path the server writes to (plus SQLite's `-wal` and `-shm` files next to it). |
-| `KEVGATE_KEV_PATH` | bundled `kevgate/data/kev_sample.json` | KEV catalog in the CISA JSON schema. A missing or invalid file makes `/readyz` return 503. |
-| `KEVGATE_API_KEYS_FILE` | unset | Lines of `key_id:scopes:sha256hex`. Unset in dev means auth is disabled with a warning. Unset in prod means the process exits. |
-| `KEVGATE_RATE_LIMIT_PER_MIN` | `120` | Token bucket size and refill per minute, per API key. |
-| `KEVGATE_AUTH_FAIL_LIMIT_PER_MIN` | `20` | Failed authentications (401) allowed per minute per source address. A source that exhausts its budget gets 429 before any key is checked. |
-| `KEVGATE_TRUSTED_PROXIES` | unset | Comma separated IPs or CIDRs of reverse proxies whose `X-Forwarded-For` may be trusted. Unset means the direct peer address is always used. Do not combine with `kevgate serve --proxy-headers`. |
-| `KEVGATE_LOG_LEVEL` | `INFO` | Standard Python level names. |
-
-Fixed limits: 1 MiB request body, 1000 findings per request.
-
-## Security controls
-
-The full STRIDE analysis is in [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
-
-| Control | Threat it addresses | Limitation |
-|---|---|---|
-| Bearer API keys, 256-bit random, stored as SHA-256 only | Unauthenticated writes or reads; key theft from the key file or a backup | No expiry or rotation workflow; revoking means editing the file and restarting |
-| Constant-time digest compare across all keys | Timing attacks that recover a key or confirm a key_id | Key count is observable in principle, not considered sensitive |
-| Scopes (`findings:write`, `queue:read`, `admin`), 401 vs 403 | A scanner key reading the queue, or any non-admin deleting findings | Scopes are coarse; no per-asset authorization |
-| Fail closed in prod without keys; malformed key file aborts startup | Accidentally deploying an open API | Dev mode is open by design |
-| Per-key token bucket, 429 with `Retry-After` | One client exhausting the service | In memory, so per replica and reset on restart |
-| Per-source failure limiter, checked before authentication | Brute-forcing key values or ids | Keyed by source address, so clients behind one NAT share a budget and an attacker there can lock them out for a short time; address spoofing is only as hard as the network makes it |
-| 1 MiB body limit (declared and streamed), 1000 findings per request | Memory exhaustion via large or chunked bodies | Limits are compiled in, not configurable |
-| Strict Pydantic models (`extra="forbid"`, no coercion, no NaN, printable asset names, CVE regex) | Mass assignment, type confusion, log injection through asset names | Asset names are free text within those rules |
-| 422 responses never echo submitted values | Reflection of client data; crash on non-JSON-safe input such as NaN | Error messages still name the failing field |
-| Parameterised SQL everywhere, CHECK constraints in the schema | SQL injection; invalid rows if validation is ever bypassed | SQLite is single-writer |
-| JSON access log with key_id and request id, never keys or bodies; every 401, 403 and throttled request also logs the client address | Repudiation; secrets in logs; no way to trace a failing source | Logs are only as durable as the platform's log pipeline |
-| Security headers (`nosniff`, `no-store`, `DENY`, strict CSP, no referrer) | Content sniffing, caching of API responses, framing | `/docs` in dev is exempt from CSP; uvicorn's `server` header is only removed via `kevgate serve` or `--no-server-header` |
-| KEV refresh is a separate CLI: HTTPS only, timeout, 32 MiB cap, schema and count validation, atomic replace | Tampered or truncated feed; the API making outbound calls | Trusts CISA's TLS endpoint; no signature on the feed |
-
-## Architecture
-
-```mermaid
-flowchart LR
-    scanner[Scanner export<br/>JSON or Nessus/Tenable CSV] -->|Bearer key| api
-    analyst[Analyst / ticketing] -->|Bearer key| api
-    prom[Prometheus] -->|scrape /metrics| api
-
-    subgraph api[kevgate API process]
-        direction TB
-        ctx[RequestContextMiddleware<br/>request id, headers, JSON log, metrics] --> limit[BodySizeLimitMiddleware<br/>1 MiB]
-        limit --> routes[FastAPI routes]
-        routes --> authz[require scope<br/>401 / 429 / 403]
-        routes --> scoring[scoring.rank]
-        routes --> repo[FindingRepository]
-    end
-
-    repo --> db[(SQLite<br/>KEVGATE_DB_PATH)]
-    kevfile[(KEV JSON<br/>KEVGATE_KEV_PATH)] -->|loaded at startup| scoring
-    cli[kevgate kev-refresh] -->|HTTPS, validated, atomic write| kevfile
-    cisa[CISA KEV feed] --> cli
-    keys[(API key file<br/>sha256 hashes)] -->|loaded at startup| authz
-```
-
-Module map: `app.py` (factory and routes), `auth.py`, `clientip.py`, `ratelimit.py`, `middleware.py`, `db.py`, `scoring.py`, `kev.py`, `csv_import.py`, `trivy_import.py`, `config.py`, `logs.py`, `metrics.py`, `cli.py`, `main.py` (ASGI entry point built from env vars).
-
-## Tests and quality
-
-Numbers from a local run on 2026-11-14 (Windows, Python 3.12.2). The `ci` workflow runs the same suite on Linux with Python 3.11 and 3.12.
-
-- `pytest`: 298 tests pass. They cover the original API contract tests, Hypothesis properties for the scoring bounds and KEV ordering, the auth matrix, rate limiting and the failed-authentication limiter, body and count limits, CSV and Trivy import edge cases, KEV refresh against a mocked network, repository upserts, and readiness with a deliberately corrupted database file.
-- Coverage: 1227 statements, 0 missed, 99.93% with branch coverage (one partial branch).
-- `ruff check .` and `ruff format --check .`: clean.
-- `mypy --strict src`: no issues in 16 source files.
-- Infrastructure tests: `promtool test rules` passes, and `terraform test` on the OIDC trust policy passes 4 runs.
-
-```bash
-make lint && make type && make test
-```
-
-## Deployment
-
-The service ships as a container image, a Helm chart, Terraform for AWS and a GitHub Actions security pipeline. Start with [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). The pipeline is in [docs/PIPELINE.md](docs/PIPELINE.md), alerts and incident playbooks in [docs/RUNBOOK.md](docs/RUNBOOK.md), and the threat model in [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
-
-Coverage does not show whether a test would notice a defect. `tests/test_mutation_kills.py` pins six behaviors that earlier survived deliberate defects: early-exit key comparison, `==` instead of `hmac.compare_digest`, `BEGIN` instead of `BEGIN IMMEDIATE`, a body counter that kept only the last chunk, a CSV merge that took the minimum CVSS, and an upsert that skipped `epss`.
-
-The docs say where each check ran. Helm lint, kubeconform, terraform validate, checkov, trivy config, promtool and actionlint ran on my machine and run again in CI. The image build, kind deployment, LocalStack apply and ZAP scan only run in GitHub Actions. The `ci`, `security` and `deploy-kind` workflows are green on `main`. `terraform` only runs when `infra/` changes, and its last run (2026-11-11) was green.
-
-Results from the latest `security` and `deploy-kind` runs on `main`:
-
-- Semgrep (`p/python`, `p/owasp-top-ten`): 160 rules, 0 findings. Bandit at medium and above: 0 findings.
-- `pip-audit` on the hashed lock: no known vulnerabilities. Trivy on the built image: 0 fixable HIGH or CRITICAL. The SBOM lists 104 components.
-- checkov: 0 failed checks on the Dockerfile (105 passed), the two rendered chart variants (181) and Terraform (138, 13 skipped with a reason).
-- kind with Calico: 12 smoke checks pass, NetworkPolicy ingress and egress are enforced, and Pod Security `restricted` rejects a privileged pod.
-- ZAP baseline: 67 rules pass, 0 warnings, 0 failures, and the gate found no medium or higher alert.
-- kubescape (report only, not a gate): NSA 79.96, MITRE 77.73, overall 86.
-- LocalStack: 20 resources applied and checked through the S3, KMS and IAM APIs. A second plan shows no drift and destroy succeeds.
+It runs as one replica on SQLite, which is a limitation and not a production design; [DEPLOYMENT.md](docs/DEPLOYMENT.md) lists what would change. Kubernetes manifests are tested on a kind cluster in CI, and the Terraform is validated against LocalStack only. Nothing is deployed to a real AWS account, and the service does not call AWS.
 
 ## License
 
