@@ -120,7 +120,7 @@ ax.legend(
     columnspacing=1.4,
 )
 
-ax2 = fig.add_axes([0.77, 0.215, 0.21, 0.57], facecolor="white")
+ax2 = fig.add_axes([0.77, 0.285, 0.21, 0.5], facecolor="white")
 tops = ["10", "25", "50", "100"]
 cvss_vals = [R["cvss_only"]["mean_kev_in_top"][t] for t in tops]
 kg_vals = [R["equal_acr"]["kev_in_top"][t] for t in tops]
@@ -145,6 +145,15 @@ for rect, v in zip(list(b1) + list(b2), cvss_vals + kg_vals, strict=True):
     )
 ax2.set_xticks(list(x))
 ax2.set_xticklabels([f"top {t}" for t in tops], fontsize=15, color=TEXT)
+ax2.set_xlabel(
+    f"List positions checked (of {n_total:,})",
+    fontsize=13.5,
+    color=TEXT,
+    labelpad=6,
+)
+ax2.set_ylabel(
+    f"Exploited findings found (of {n_kev})", fontsize=14, color=TEXT, labelpad=8
+)
 ax2.set_ylim(0, n_kev + 1.6)
 ax2.set_yticks([0, 5, 10])
 ax2.tick_params(axis="y", labelsize=14, colors=TEXT)
@@ -155,7 +164,7 @@ for s in ("top", "right"):
 for s in ("left", "bottom"):
     ax2.spines[s].set_color(LINE)
 fig.text(0.77, 0.865, "Exploited findings in the top N", fontsize=16, fontweight="bold", color=TEXT)
-ax2.legend(loc="upper center", bbox_to_anchor=(0.5, -0.1), ncol=1, frameon=False, fontsize=12.5)
+ax2.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=1, frameon=False, fontsize=12.5)
 
 mi = ", ".join(s["image"] for s in MAN["scans"])
 fig.text(
