@@ -1,0 +1,165 @@
+{
+ "commit": "3e299c984e9c7e9b756eb096e6a28462e77ed775",
+ "runs": {
+  "deploy-kind": {
+   "id": 43545433230,
+   "created_at": "2026-11-14T02:17:12Z",
+   "url": "https://github.com/samiali38183/kevgate/actions/runs/43545433230",
+   "jobs": {
+    "kind deploy, smoke, NetworkPolicy, ZAP, kubescape": {
+     "Set up job": "success",
+     "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Install kind, kubectl, helm, kubescape (pinned, checksum verified)": "success",
+     "Resolve requirements.lock": "success",
+     "Run docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069": "success",
+     "Build image": "success",
+     "Create kind cluster without the default CNI": "success",
+     "Install Calico (NetworkPolicy enforcement)": "success",
+     "Load image into kind": "success",
+     "Namespace with Pod Security restricted, generated API key, Secret": "success",
+     "Helm install": "success",
+     "Smoke test through port-forward": "success",
+     "NetworkPolicy, egress deny and Pod Security admission": "success",
+     "Audit log contains the events the Sigma rules target": "success",
+     "Prove restricted pod security context on the live pod": "success",
+     "OWASP ZAP baseline (DAST)": "success",
+     "kubescape scan of the namespace (report)": "success",
+     "Stop port-forward": "success",
+     "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9": "success",
+     "Post Build image": "success",
+     "Post Run docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069": "success",
+     "Post Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Complete job": "success"
+    }
+   }
+  },
+  "ci": {
+   "id": 43545433201,
+   "created_at": "2026-11-14T02:17:12Z",
+   "url": "https://github.com/samiali38183/kevgate/actions/runs/43545433201",
+   "jobs": {
+    "lint, types, tests (py3.11)": {
+     "Set up job": "success",
+     "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Install runtime dependencies from the hashed lock": "success",
+     "Install the package and dev tools": "success",
+     "ruff": "success",
+     "mypy": "success",
+     "pytest with coverage": "success",
+     "Upload coverage and test results": "success",
+     "Post Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Complete job": "success"
+    },
+    "lint, types, tests (py3.12)": {
+     "Set up job": "success",
+     "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Install runtime dependencies from the hashed lock": "success",
+     "Install the package and dev tools": "success",
+     "ruff": "success",
+     "mypy": "success",
+     "pytest with coverage": "success",
+     "Upload coverage and test results": "success",
+     "Post Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Complete job": "success"
+    }
+   }
+  },
+  "security": {
+   "id": 43545433189,
+   "created_at": "2026-11-14T02:17:12Z",
+   "url": "https://github.com/samiali38183/kevgate/actions/runs/43545433189",
+   "jobs": {
+    "SAST (Semgrep, Bandit)": {
+     "Set up job": "success",
+     "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Install scanners": "success",
+     "Semgrep (p/python, p/owasp-top-ten)": "success",
+     "Bandit (medium severity and above)": "success",
+     "Upload SARIF to code scanning": "success",
+     "Keep SARIF as artifacts": "success",
+     "Post Upload SARIF to code scanning": "success",
+     "Post Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Complete job": "success"
+    },
+    "IaC and config scan (checkov, trivy, lint)": {
+     "Set up job": "success",
+     "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Install tools": "success",
+     "Render chart with every values file": "success",
+     "checkov (Dockerfile, rendered Kubernetes, Terraform)": "success",
+     "trivy config (fail on MEDIUM and above)": "success",
+     "helm lint and kubeconform (strict)": "success",
+     "Chart guard rails reject unsafe values": "success",
+     "promtool (rules, unit tests, CRD in sync)": "success",
+     "Sigma rules": "success",
+     "actionlint and shellcheck": "success",
+     "Base image pin check (warns on drift)": "success",
+     "Post Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Complete job": "success"
+    },
+    "Secret scan (gitleaks)": {
+     "Set up job": "success",
+     "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Install gitleaks": "success",
+     "Scan full history": "success",
+     "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9": "success",
+     "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Complete job": "success"
+    },
+    "Image build, Trivy scan, SBOM": {
+     "Set up job": "success",
+     "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Install trivy": "success",
+     "Resolve requirements.lock": "success",
+     "Run docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069": "success",
+     "Build image": "success",
+     "Trivy image scan, SARIF report": "success",
+     "Trivy image gate (HIGH and CRITICAL with a fix available)": "success",
+     "SBOM (CycloneDX)": "success",
+     "Container runs read-only as UID 10001 and passes the smoke test": "success",
+     "Upload SARIF to code scanning": "success",
+     "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9": "success",
+     "Post Upload SARIF to code scanning": "success",
+     "Post Build image": "success",
+     "Post Run docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069": "success",
+     "Post Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Complete job": "success"
+    },
+    "SCA (pip-audit on the hashed lock)": {
+     "Set up job": "success",
+     "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Resolve requirements.lock (runtime dependencies, sha256 hashes)": "success",
+     "pip-audit": "success",
+     "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9": "success",
+     "Post Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0": "success",
+     "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "success",
+     "Complete job": "success"
+    }
+   }
+  }
+ },
+ "local": {
+  "tests": 277,
+  "failed_or_skipped": 0,
+  "coverage_percent": 99.92,
+  "statements": 1092
+ },
+ "provenance": {
+  "image": "ghcr.io/samiali38183/kevgate:0.1.1",
+  "verified": true,
+  "checked_on": "2026-11-15"
+ }
+}

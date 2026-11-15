@@ -5,6 +5,16 @@
 [![deploy-kind](https://github.com/samiali38183/kevgate/actions/workflows/deploy-kind.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/deploy-kind.yml)
 [![terraform](https://github.com/samiali38183/kevgate/actions/workflows/terraform.yml/badge.svg?branch=main)](https://github.com/samiali38183/kevgate/actions/workflows/terraform.yml)
 
+**kevgate turns a vulnerability scanner export into a fix-first list, putting the flaws attackers are known to exploit at the top, and ships with the security pipeline a production service needs.**
+
+![Two panels. Left: ranking weights read from the code, 0.40 for being in CISA's Known Exploited Vulnerabilities list, 0.25 asset importance, 0.20 exploit likelihood (EPSS), 0.20 severity (CVSS). Right: 12 checks all green on the latest main run, including 277 tests at 99.92% branch coverage, Semgrep, Bandit, gitleaks, pip-audit, checkov, Trivy, a kind cluster deploy with NetworkPolicy and Pod Security checks, and an OWASP ZAP scan.](docs/img/hero.png)
+
+*277 tests at 99.92% branch coverage, plus 11 more checks (type checks, scanners, a cluster deploy), all green on main. Weights are my own choice and have not been tested against remediation outcomes.*
+
+**What it does, in plain terms.** A scanner export lists thousands of flaws, usually sorted by a severity score. That puts a theoretical 9.8 above a 7.5 that attackers are using today. kevgate adds what the severity score lacks: whether the flaw is on the US government's list of vulnerabilities being exploited in the wild, how likely exploitation is, and how important the affected machine is. It returns the list in the order to fix them. Most of this repository is the packaging around that small service: API keys, rate limiting, a locked-down container, a Helm chart, Terraform and a CI pipeline that scans and signs what it ships.
+
+## Technical overview
+
 kevgate takes scanner findings in and gives back a remediation queue, ranked by whether the CVE is known to be exploited (CISA KEV), how likely exploitation is (EPSS), severity (CVSS) and how much the affected asset matters (asset criticality rating, ACR). The service is small on purpose. Most of the repository is the packaging around it: API keys and rate limiting, a locked-down container, a Helm chart, Terraform, and a CI pipeline that scans and signs what it ships.
 
 | | |
