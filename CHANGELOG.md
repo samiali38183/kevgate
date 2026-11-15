@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- First run on real data (`docs/real-run/`): four old public container images scanned with Trivy, ranked against the live CISA KEV catalog and FIRST EPSS scores, compared with a CVSS-only sort.
+- New `kevgate import-trivy` command and `kevgate.trivy_import` module. kevgate could only read Nessus/Tenable CSV and hand-built JSON, so the real scanner output could not be loaded without a converter; this was the gap the run exposed. Findings with non-CVE IDs and no CVSS are skipped and counted.
+- The real KEV feed (1,781 entries, six-digit CVE numbers) parses and validates with the existing code; no change was needed there.
+- Tests 277 to 298, coverage 99.93% with branches (1227 statements). The hero image was regenerated with the new counts.
+
 ## 0.1.1 - 2026-11-11
 
 Review round after 0.1.0. Every item was checked by running the tests or the workflow.

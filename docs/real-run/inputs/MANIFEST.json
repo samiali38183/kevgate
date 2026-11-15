@@ -1,0 +1,70 @@
+{
+  "collected_utc": "2026-11-15T00:23:54+00:00",
+  "trivy_vulnerability_db_updated_at": "2026-11-10T19:01:23Z",
+  "raw_sha256": {
+    "kev.json": "4028ec035856331a717d3305e87e45be37d400fc500da34a5464f05fc2773764",
+    "trivy_vulnerables_web-dvwa.json": "313a6cda2adeb35c13916726f39006290b98c8f886a94b85d90b3e1c6c47753a",
+    "trivy_mysql_5.6.json": "843d5e49c59d9af21fad04400e20f5606229fb2ddb97fd2fafacc39eabcf3651",
+    "trivy_tomcat_8.5.50.json": "67b25319aecfb3c4f438c533989e70b325cf3e8a54416907a64d1f9df2f34937",
+    "trivy_httpd_2.4.49.json": "969dbe1e51a2a551314396b7e50f90e6c2c591a8fbc3dfd22316d01634008aa8",
+    "epss.csv.gz": "54c08501bdf3d354935d92092b79e4ff1e64f459ae2052226e3025321c8b8c38"
+  },
+  "kev": {
+    "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+    "catalogVersion": "2026.11.13",
+    "dateReleased": "2026-11-13T20:24:18.3008Z",
+    "count": 1781
+  },
+  "scans": [
+    {
+      "image": "vulnerables/web-dvwa",
+      "digest": "vulnerables/web-dvwa@sha256:dae203fe11646a86937bf04db0079adef295f426da68a92b40e3b181f337daa7",
+      "os": {
+        "Family": "debian",
+        "Name": "9.5",
+        "EOSL": true
+      },
+      "scanned_at": "2026-11-14T19:17:42.3123609-05:00",
+      "trivy_version": "0.76.2"
+    },
+    {
+      "image": "mysql:5.6",
+      "digest": "mysql@sha256:20575ecebe6216036d25dab5903808211f1e9ba63dc7825ac20cb975e34cfcae",
+      "os": {
+        "Family": "debian",
+        "Name": "9.13",
+        "EOSL": true
+      },
+      "scanned_at": "2026-11-14T19:17:53.155808-05:00",
+      "trivy_version": "0.76.2"
+    },
+    {
+      "image": "tomcat:8.5.50",
+      "digest": "tomcat@sha256:d53c2079ea67db92f6d7c39e9450f641610336016fdddef5392c5afd41518e5e",
+      "os": {
+        "Family": "debian",
+        "Name": "10.2",
+        "EOSL": true
+      },
+      "scanned_at": "2026-11-14T19:20:22.7671942-05:00",
+      "trivy_version": "0.76.2"
+    },
+    {
+      "image": "httpd:2.4.49",
+      "digest": "httpd@sha256:dcba0d12e2362fb0c50ec524ae8aa1cca4a4ba7216617a57e7bbca20767e79cc",
+      "os": {
+        "Family": "debian",
+        "Name": "10.10",
+        "EOSL": true
+      },
+      "scanned_at": "2026-11-14T19:18:04.7563079-05:00",
+      "trivy_version": "0.76.2"
+    }
+  ],
+  "epss": {
+    "url": "https://epss.empiricalsecurity.com/epss_scores-current.csv.gz",
+    "header_line": "#model_version:v2026.06.15,score_date:2026-11-14T12:00:22Z",
+    "rows_total": 406543,
+    "rows_kept": 826
+  }
+}

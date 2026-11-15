@@ -7,11 +7,31 @@
 
 **kevgate turns a vulnerability scanner export into a fix-first list, putting the flaws attackers are known to exploit at the top, and ships with the security pipeline a production service needs.**
 
-![Two panels. Left: ranking weights read from the code, 0.40 for being in CISA's Known Exploited Vulnerabilities list, 0.25 asset importance, 0.20 exploit likelihood (EPSS), 0.20 severity (CVSS). Right: 12 checks all green on the latest main run, including 277 tests at 99.92% branch coverage, Semgrep, Bandit, gitleaks, pip-audit, checkov, Trivy, a kind cluster deploy with NetworkPolicy and Pod Security checks, and an OWASP ZAP scan.](docs/img/hero.png)
+![Two panels. Left: ranking weights read from the code, 0.40 for being in CISA's Known Exploited Vulnerabilities list, 0.25 asset importance, 0.20 exploit likelihood (EPSS), 0.20 severity (CVSS). Right: 12 checks all green on the latest main run, including 298 tests at 99.93% branch coverage, Semgrep, Bandit, gitleaks, pip-audit, checkov, Trivy, a kind cluster deploy with NetworkPolicy and Pod Security checks, and an OWASP ZAP scan.](docs/img/hero.png)
 
-*277 tests at 99.92% branch coverage, plus 11 more checks (type checks, scanners, a cluster deploy), all green on main. Weights are my own choice and have not been tested against remediation outcomes.*
+*298 tests at 99.93% branch coverage, plus 11 more checks (type checks, scanners, a cluster deploy), all green on main. Weights are my own choice and have not been tested against remediation outcomes.*
 
 **What it does, in plain terms.** A scanner export lists thousands of flaws, usually sorted by a severity score. That puts a theoretical 9.8 above a 7.5 that attackers are using today. kevgate adds what the severity score lacks: whether the flaw is on the US government's list of vulnerabilities being exploited in the wild, how likely exploitation is, and how important the affected machine is. It returns the list in the order to fix them. Most of this repository is the packaging around that small service: API keys, rate limiting, a locked-down container, a Helm chart, Terraform and a CI pipeline that scans and signs what it ships.
+
+## Real-data run
+
+**On a real scan of four old public container images, CVSS order buries the flaws attackers are using; kevgate puts them first.** The 1,112 findings include 10 that are on CISA's Known Exploited Vulnerabilities list. Sorted by CVSS alone, 0.9 of those 10 are expected in the top 50 (averaged over random tie orders); kevgate puts all 10 in the top 10. That is partly by design, since KEV is a score input, and it is one run with hand-chosen weights that have not been checked against remediation outcomes.
+
+![Left: for each of the 10 exploited findings, the grey marker shows where a CVSS-only sort puts it, between about rank 2 and rank 610, and the red dot shows kevgate's rank, 1 to 10. Right: exploited findings found in the top 10, 25, 50 and 100 positions, CVSS only 0.15, 0.4, 0.86 and 1.75, kevgate 10 each.](docs/img/real-run.png)
+
+Reproduce it from the saved inputs (the scanner reports, the KEV catalog and the EPSS rows are committed, with hashes and sources in the manifest):
+
+```bash
+pip install -e ".[dev]" matplotlib pillow
+python scripts/real_run_analyze.py && python scripts/make_real_run.py
+```
+
+| Ordering | KEV in top 10 | top 25 | top 50 | top 100 |
+|---|---|---|---|---|
+| CVSS only (mean of 1,000 tie orders) | 0.15 | 0.40 | 0.86 | 1.75 |
+| kevgate | 10 | 10 | 10 | 10 |
+
+Asset importance did not change the result here: even the six exploited findings on the image I rated least important outrank everything on the image I rated most important. Inputs, method and limits (the run is circular on KEV and EPSS, ACR is assumed, and Trivy missed one KEV entry on `httpd:2.4.49`) are in [docs/real-run](docs/real-run/README.md). The run also added `kevgate import-trivy`, so a Trivy JSON report loads directly.
 
 ## Technical overview
 
@@ -20,7 +40,7 @@ kevgate takes scanner findings in and gives back a remediation queue, ranked by 
 | | |
 |---|---|
 | Ranking | KEV membership carries 0.40 of the score, so a KEV finding never ranks below a non-KEV one on the same asset. The weights are my own choice. |
-| Tests | 277 pytest tests, 99.92% branch coverage (CI floor 90%), `ruff` and `mypy --strict` clean. They include Hypothesis property tests and tests that pin defects earlier tests missed. |
+| Tests | 298 pytest tests, 99.93% branch coverage (CI floor 90%), `ruff` and `mypy --strict` clean. They include Hypothesis property tests and tests that pin defects earlier tests missed. |
 | Pipeline | CI runs Semgrep, Bandit, `pip-audit` on a hashed lock, gitleaks, checkov, Trivy on the image, a kind deploy with NetworkPolicy and Pod Security checks, a ZAP baseline scan, and Terraform against LocalStack ([pipeline](docs/PIPELINE.md)). |
 | Release | `v0.1.1` image on GHCR, signed with cosign (keyless), with provenance and SBOM attestations. `gh attestation verify` passed from a machine outside the workflow. |
 | Not done | Nothing is deployed to a real AWS account. The service runs as one replica on SQLite. See [Status and limits](#status-and-limits). |
@@ -29,7 +49,7 @@ Try it (Python 3.11+):
 
 ```bash
 python -m venv .venv && source .venv/bin/activate       # Windows: .venv\Scripts\activate
-pip install -e ".[dev]" && pytest -q                    # 277 tests
+pip install -e ".[dev]" && pytest -q                    # 298 tests
 KEVGATE_DB_PATH=./kevgate.db uvicorn kevgate.main:app --port 8000      # dev mode: auth off, a warning is logged
 ```
 
@@ -129,6 +149,7 @@ curl -s localhost:8000/readyz
 | `kevgate serve [--host] [--port]` | Runs uvicorn with the server header and the duplicate access log turned off. |
 | `kevgate keygen --scope S [--scope S] [--key-id ID]` | Prints a new key once, plus the `key_id:scopes:sha256` line for the key file. |
 | `kevgate import-csv FILE [--default-acr N] [--db PATH]` | Loads a scanner CSV straight into the database, in batches, with no 1000-finding cap. |
+| `kevgate import-trivy FILE [--default-acr N] [--epss-file CSV] [--db PATH]` | Loads a `trivy image --format json` report. The asset is the image name; CVSS comes from the report, EPSS from a FIRST CSV (0.0 if absent), `days_open` is 0. Non-CVE IDs and findings with no CVSS are skipped and counted. |
 | `kevgate kev-refresh [--output PATH] [--url URL] [--timeout S]` | Downloads the CISA KEV feed over HTTPS, validates it and atomically replaces the local file. The service loads KEV at startup, so restart it afterwards. |
 
 ## Configuration
@@ -190,14 +211,14 @@ flowchart LR
     keys[(API key file<br/>sha256 hashes)] -->|loaded at startup| authz
 ```
 
-Module map: `app.py` (factory and routes), `auth.py`, `clientip.py`, `ratelimit.py`, `middleware.py`, `db.py`, `scoring.py`, `kev.py`, `csv_import.py`, `config.py`, `logs.py`, `metrics.py`, `cli.py`, `main.py` (ASGI entry point built from env vars).
+Module map: `app.py` (factory and routes), `auth.py`, `clientip.py`, `ratelimit.py`, `middleware.py`, `db.py`, `scoring.py`, `kev.py`, `csv_import.py`, `trivy_import.py`, `config.py`, `logs.py`, `metrics.py`, `cli.py`, `main.py` (ASGI entry point built from env vars).
 
 ## Tests and quality
 
-Numbers from a local run on 2026-11-13 (Windows, Python 3.12.2). The `ci` workflow runs the same suite on Linux with Python 3.11 and 3.12.
+Numbers from a local run on 2026-11-14 (Windows, Python 3.12.2). The `ci` workflow runs the same suite on Linux with Python 3.11 and 3.12.
 
-- `pytest`: 277 tests pass. They cover the original API contract tests, Hypothesis properties for the scoring bounds and KEV ordering, the auth matrix, rate limiting and the failed-authentication limiter, body and count limits, CSV edge cases, KEV refresh against a mocked network, repository upserts, and readiness with a deliberately corrupted database file.
-- Coverage: 1092 statements, 0 missed, 99.92% with branch coverage (one partial branch).
+- `pytest`: 298 tests pass. They cover the original API contract tests, Hypothesis properties for the scoring bounds and KEV ordering, the auth matrix, rate limiting and the failed-authentication limiter, body and count limits, CSV and Trivy import edge cases, KEV refresh against a mocked network, repository upserts, and readiness with a deliberately corrupted database file.
+- Coverage: 1227 statements, 0 missed, 99.93% with branch coverage (one partial branch).
 - `ruff check .` and `ruff format --check .`: clean.
 - `mypy --strict src`: no issues in 16 source files.
 - Infrastructure tests: `promtool test rules` passes, and `terraform test` on the OIDC trust policy passes 4 runs.
