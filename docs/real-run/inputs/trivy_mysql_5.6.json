@@ -1,0 +1,4844 @@
+{
+ "ArtifactName": "mysql:5.6",
+ "ArtifactType": "container_image",
+ "Metadata": {
+  "OS": {
+   "Family": "debian",
+   "Name": "9.13",
+   "EOSL": true
+  },
+  "RepoDigests": [
+   "mysql@sha256:20575ecebe6216036d25dab5903808211f1e9ba63dc7825ac20cb975e34cfcae"
+  ]
+ },
+ "Trivy": {
+  "Version": "0.76.2"
+ },
+ "CreatedAt": "2026-11-14T19:17:53.155808-05:00",
+ "Results": [
+  {
+   "Target": "mysql:5.6 (debian 9.13)",
+   "Vulnerabilities": [
+    {
+     "VulnerabilityID": "CVE-2016-2779",
+     "PkgName": "bsdutils",
+     "InstalledVersion": "1:2.29.2-1+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.2,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+       "V2Score": 6.2,
+       "V3Score": 8.6
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-37600",
+     "PkgName": "bsdutils",
+     "InstalledVersion": "1:2.29.2-1+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 1.2,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2016-2781",
+     "PkgName": "coreutils",
+     "InstalledVersion": "8.26-3",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:N/I:P/A:N",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:N",
+       "V2Score": 2.1,
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+       "V2Score": 6.2,
+       "V3Score": 8.6
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "DLA-2948-1",
+     "PkgName": "debian-archive-keyring",
+     "InstalledVersion": "2017.5+deb9u1",
+     "FixedVersion": "2017.5+deb9u2",
+     "Severity": "UNKNOWN"
+    },
+    {
+     "VulnerabilityID": "CVE-2018-1000858",
+     "PkgName": "dirmngr",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 8.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-9234",
+     "PkgName": "dirmngr",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:L/A:N",
+       "V3Score": 2.2
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-14855",
+     "PkgName": "dirmngr",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-1664",
+     "PkgName": "dpkg",
+     "InstalledVersion": "1.18.25",
+     "FixedVersion": "1.18.26",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.5,
+       "V3Score": 9.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-1304",
+     "PkgName": "e2fslibs",
+     "InstalledVersion": "1.43.4-2+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:H",
+       "V3Score": 5.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-1304",
+     "PkgName": "e2fsprogs",
+     "InstalledVersion": "1.43.4-2+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:H",
+       "V3Score": 5.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-12886",
+     "PkgName": "gcc-6-base",
+     "InstalledVersion": "6.3.0-18+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 8.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:H",
+       "V3Score": 6.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-1000858",
+     "PkgName": "gnupg",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 8.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-9234",
+     "PkgName": "gnupg",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:L/A:N",
+       "V3Score": 2.2
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-14855",
+     "PkgName": "gnupg",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-1000858",
+     "PkgName": "gnupg-agent",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 8.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-9234",
+     "PkgName": "gnupg-agent",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:L/A:N",
+       "V3Score": 2.2
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-14855",
+     "PkgName": "gnupg-agent",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-1000858",
+     "PkgName": "gpgv",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 8.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-9234",
+     "PkgName": "gpgv",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:L/A:N",
+       "V3Score": 2.2
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-14855",
+     "PkgName": "gpgv",
+     "InstalledVersion": "2.1.18-8~deb9u4",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-1271",
+     "PkgName": "gzip",
+     "InstalledVersion": "1.6-5+b1",
+     "FixedVersion": "1.6-5+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2016-2779",
+     "PkgName": "libblkid1",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.2,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+       "V2Score": 6.2,
+       "V3Score": 8.6
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-37600",
+     "PkgName": "libblkid1",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 1.2,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-12900",
+     "PkgName": "libbz2-1.0",
+     "InstalledVersion": "1.0.6-8.1",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.5,
+       "V3Score": 9.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:L",
+       "V3Score": 4.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-1304",
+     "PkgName": "libcomerr2",
+     "InstalledVersion": "1.43.4-2+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:H",
+       "V3Score": 5.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-8457",
+     "PkgName": "libdb5.3",
+     "InstalledVersion": "5.3.28-12+deb9u1",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.5,
+       "V3Score": 9.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2016-2779",
+     "PkgName": "libfdisk1",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.2,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+       "V2Score": 6.2,
+       "V3Score": 8.6
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-37600",
+     "PkgName": "libfdisk1",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 1.2,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-12886",
+     "PkgName": "libgcc1",
+     "InstalledVersion": "1:6.3.0-18+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 8.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:H",
+       "V3Score": 6.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-33560",
+     "PkgName": "libgcrypt20",
+     "InstalledVersion": "1.7.6-2+deb9u4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-13627",
+     "PkgName": "libgcrypt20",
+     "InstalledVersion": "1.7.6-2+deb9u4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:P/I:P/A:N",
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N",
+       "V2Score": 2.6,
+       "V3Score": 6.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N",
+       "V3Score": 6.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-16868",
+     "PkgName": "libgnutls30",
+     "InstalledVersion": "3.5.8-5+deb9u6",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:M/Au:N/C:P/I:P/A:N",
+       "V3Vector": "CVSS:3.1/AV:P/AC:H/PR:L/UI:N/S:C/C:H/I:L/A:N",
+       "V2Score": 3.3,
+       "V3Score": 5.6
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:P/AC:H/PR:H/UI:N/S:C/C:H/I:N/A:N",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-4209",
+     "PkgName": "libgnutls30",
+     "InstalledVersion": "3.5.8-5+deb9u6",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-16869",
+     "PkgName": "libhogweed4",
+     "InstalledVersion": "3.3-1+deb9u1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:M/Au:N/C:P/I:P/A:N",
+       "V3Vector": "CVSS:3.1/AV:P/AC:H/PR:N/UI:N/S:C/C:H/I:L/A:N",
+       "V2Score": 3.3,
+       "V3Score": 5.7
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:P/AC:H/PR:H/UI:N/S:C/C:H/I:N/A:N",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-29155",
+     "PkgName": "libldap-2.4-2",
+     "InstalledVersion": "2.4.44+dfsg-5+deb9u8",
+     "FixedVersion": "2.4.44+dfsg-5+deb9u9",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.5,
+       "V3Score": 9.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-29155",
+     "PkgName": "libldap-common",
+     "InstalledVersion": "2.4.44+dfsg-5+deb9u8",
+     "FixedVersion": "2.4.44+dfsg-5+deb9u9",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.5,
+       "V3Score": 9.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17543",
+     "PkgName": "liblz4-1",
+     "InstalledVersion": "0.0~r131-2+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 8.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-1271",
+     "PkgName": "liblzma5",
+     "InstalledVersion": "5.2.2-1.2+b1",
+     "FixedVersion": "5.2.2-1.2+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2016-2779",
+     "PkgName": "libmount1",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.2,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+       "V2Score": 6.2,
+       "V3Score": 8.6
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-37600",
+     "PkgName": "libmount1",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 1.2,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-29458",
+     "PkgName": "libncurses5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:H",
+       "V3Score": 7.1
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:H",
+       "V2Score": 5.8,
+       "V3Score": 7.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:H",
+       "V3Score": 6.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-19211",
+     "PkgName": "libncurses5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 4.3,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17594",
+     "PkgName": "libncurses5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V2Score": 4.6,
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17595",
+     "PkgName": "libncurses5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V2Score": 5.8,
+       "V3Score": 5.4
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-29458",
+     "PkgName": "libncursesw5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:H",
+       "V3Score": 7.1
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:H",
+       "V2Score": 5.8,
+       "V3Score": 7.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:H",
+       "V3Score": 6.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-19211",
+     "PkgName": "libncursesw5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 4.3,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17594",
+     "PkgName": "libncursesw5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V2Score": 4.6,
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17595",
+     "PkgName": "libncursesw5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V2Score": 5.8,
+       "V3Score": 5.4
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-16869",
+     "PkgName": "libnettle6",
+     "InstalledVersion": "3.3-1+deb9u1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:M/Au:N/C:P/I:P/A:N",
+       "V3Vector": "CVSS:3.1/AV:P/AC:H/PR:N/UI:N/S:C/C:H/I:L/A:N",
+       "V2Score": 3.3,
+       "V3Score": 5.7
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:P/AC:H/PR:H/UI:N/S:C/C:H/I:N/A:N",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-14155",
+     "PkgName": "libpcre3",
+     "InstalledVersion": "2:8.39-3",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      },
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V2Score": 5,
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-16156",
+     "PkgName": "libperl5.24",
+     "InstalledVersion": "5.24.1-3+deb9u7",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-24407",
+     "PkgName": "libsasl2-2",
+     "InstalledVersion": "2.1.27~101-g0780600+dfsg-3+deb9u1",
+     "FixedVersion": "2.1.27~101-g0780600+dfsg-3+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:S/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 6.5,
+       "V3Score": 8.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-24407",
+     "PkgName": "libsasl2-modules-db",
+     "InstalledVersion": "2.1.27~101-g0780600+dfsg-3+deb9u1",
+     "FixedVersion": "2.1.27~101-g0780600+dfsg-3+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:S/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 6.5,
+       "V3Score": 8.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-36084",
+     "PkgName": "libsepol1",
+     "InstalledVersion": "2.6-2",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L",
+       "V2Score": 2.1,
+       "V3Score": 3.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 3.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-36085",
+     "PkgName": "libsepol1",
+     "InstalledVersion": "2.6-2",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+       "V2Score": 2.1,
+       "V3Score": 3.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 3.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-36086",
+     "PkgName": "libsepol1",
+     "InstalledVersion": "2.6-2",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+       "V2Score": 2.1,
+       "V3Score": 3.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 3.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-36087",
+     "PkgName": "libsepol1",
+     "InstalledVersion": "2.6-2",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+       "V2Score": 2.1,
+       "V3Score": 3.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 3.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2016-2779",
+     "PkgName": "libsmartcols1",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.2,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+       "V2Score": 6.2,
+       "V3Score": 8.6
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-37600",
+     "PkgName": "libsmartcols1",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 1.2,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-8457",
+     "PkgName": "libsqlite3-0",
+     "InstalledVersion": "3.16.2-5+deb9u3",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.5,
+       "V3Score": 9.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-19645",
+     "PkgName": "libsqlite3-0",
+     "InstalledVersion": "3.16.2-5+deb9u3",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 2.1,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-13631",
+     "PkgName": "libsqlite3-0",
+     "InstalledVersion": "3.16.2-5+deb9u3",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 5.5
+      },
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:N/I:P/A:N",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+       "V2Score": 2.1,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 5.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-1304",
+     "PkgName": "libss2",
+     "InstalledVersion": "1.43.4-2+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:H",
+       "V3Score": 5.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-12886",
+     "PkgName": "libstdc++6",
+     "InstalledVersion": "6.3.0-18+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 8.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:H",
+       "V3Score": 6.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-3843",
+     "PkgName": "libsystemd0",
+     "InstalledVersion": "232-25+deb9u13",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 4.6,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 4.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-3844",
+     "PkgName": "libsystemd0",
+     "InstalledVersion": "232-25+deb9u13",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 4.6,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 4.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-1712",
+     "PkgName": "libsystemd0",
+     "InstalledVersion": "232-25+deb9u13",
+     "FixedVersion": "232-25+deb9u14",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 4.6,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-3997",
+     "PkgName": "libsystemd0",
+     "InstalledVersion": "232-25+deb9u13",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-16888",
+     "PkgName": "libsystemd0",
+     "InstalledVersion": "232-25+deb9u13",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:M/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 1.9,
+       "V3Score": 4.7
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-6954",
+     "PkgName": "libsystemd0",
+     "InstalledVersion": "232-25+deb9u13",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.2,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-29458",
+     "PkgName": "libtinfo5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:H",
+       "V3Score": 7.1
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:H",
+       "V2Score": 5.8,
+       "V3Score": 7.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:H",
+       "V3Score": 6.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-19211",
+     "PkgName": "libtinfo5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 4.3,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17594",
+     "PkgName": "libtinfo5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V2Score": 4.6,
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17595",
+     "PkgName": "libtinfo5",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V2Score": 5.8,
+       "V3Score": 5.4
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-3843",
+     "PkgName": "libudev1",
+     "InstalledVersion": "232-25+deb9u13",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 4.6,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 4.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-3844",
+     "PkgName": "libudev1",
+     "InstalledVersion": "232-25+deb9u13",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 4.6,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 4.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-1712",
+     "PkgName": "libudev1",
+     "InstalledVersion": "232-25+deb9u13",
+     "FixedVersion": "232-25+deb9u14",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 4.6,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-3997",
+     "PkgName": "libudev1",
+     "InstalledVersion": "232-25+deb9u13",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-16888",
+     "PkgName": "libudev1",
+     "InstalledVersion": "232-25+deb9u13",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:M/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 1.9,
+       "V3Score": 4.7
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-6954",
+     "PkgName": "libudev1",
+     "InstalledVersion": "232-25+deb9u13",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.2,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2016-2779",
+     "PkgName": "libuuid1",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.2,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+       "V2Score": 6.2,
+       "V3Score": 8.6
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-37600",
+     "PkgName": "libuuid1",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 1.2,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-7169",
+     "PkgName": "login",
+     "InstalledVersion": "1:4.4-4.1+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 4.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2016-2779",
+     "PkgName": "mount",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.2,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+       "V2Score": 6.2,
+       "V3Score": 8.6
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-37600",
+     "PkgName": "mount",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 1.2,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-29458",
+     "PkgName": "ncurses-base",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:H",
+       "V3Score": 7.1
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:H",
+       "V2Score": 5.8,
+       "V3Score": 7.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:H",
+       "V3Score": 6.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-19211",
+     "PkgName": "ncurses-base",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 4.3,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17594",
+     "PkgName": "ncurses-base",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V2Score": 4.6,
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17595",
+     "PkgName": "ncurses-base",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V2Score": 5.8,
+       "V3Score": 5.4
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-29458",
+     "PkgName": "ncurses-bin",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:H",
+       "V3Score": 7.1
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:H",
+       "V2Score": 5.8,
+       "V3Score": 7.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:H",
+       "V3Score": 6.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-19211",
+     "PkgName": "ncurses-bin",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 4.3,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17594",
+     "PkgName": "ncurses-bin",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V2Score": 4.6,
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2019-17595",
+     "PkgName": "ncurses-bin",
+     "InstalledVersion": "6.0+20161126-1+deb9u2",
+     "Severity": "LOW",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:L",
+       "V2Score": 5.8,
+       "V3Score": 5.4
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:L",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-7169",
+     "PkgName": "passwd",
+     "InstalledVersion": "1:4.4-4.1+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 4.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-16156",
+     "PkgName": "perl",
+     "InstalledVersion": "5.24.1-3+deb9u7",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-16156",
+     "PkgName": "perl-base",
+     "InstalledVersion": "5.24.1-3+deb9u7",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-16156",
+     "PkgName": "perl-modules-5.24",
+     "InstalledVersion": "5.24.1-3+deb9u7",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V2Score": 6.8,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "DLA-2963-1",
+     "PkgName": "tzdata",
+     "InstalledVersion": "2021a-0+deb9u2",
+     "FixedVersion": "2021a-0+deb9u3",
+     "Severity": "UNKNOWN"
+    },
+    {
+     "VulnerabilityID": "DLA-3051-1",
+     "PkgName": "tzdata",
+     "InstalledVersion": "2021a-0+deb9u2",
+     "FixedVersion": "2021a-0+deb9u4",
+     "Severity": "UNKNOWN"
+    },
+    {
+     "VulnerabilityID": "CVE-2016-2779",
+     "PkgName": "util-linux",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V2Score": 7.2,
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+       "V3Vector": "CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+       "V2Score": 6.2,
+       "V3Score": 8.6
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-37600",
+     "PkgName": "util-linux",
+     "InstalledVersion": "2.29.2-1+deb9u1",
+     "Severity": "LOW",
+     "CVSS": {
+      "nvd": {
+       "V2Vector": "AV:L/AC:H/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 1.2,
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 4.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-1271",
+     "PkgName": "xz-utils",
+     "InstalledVersion": "5.2.2-1.2+b1",
+     "FixedVersion": "5.2.2-1.2+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2018-25032",
+     "PkgName": "zlib1g",
+     "InstalledVersion": "1:1.2.8.dfsg-5",
+     "FixedVersion": "1:1.2.8.dfsg-5+deb9u1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "ghsa": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "julia": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:H",
+       "V3Score": 8.2
+      }
+     }
+    }
+   ]
+  },
+  {
+   "Target": "usr/local/bin/gosu",
+   "Vulnerabilities": [
+    {
+     "VulnerabilityID": "CVE-2022-23806",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.16.14, 1.17.7",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H",
+       "V3Score": 9.1
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H",
+       "V2Score": 6.4,
+       "V3Score": 9.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:H",
+       "V3Score": 7.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-24538",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.8, 1.20.3",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-24540",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.9, 1.20.4",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 8.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-24790",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.21.11, 1.22.4",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+       "V3Score": 6.7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-68121",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.13, 1.25.7, 1.26.0-rc.3",
+     "Severity": "CRITICAL",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+       "V3Score": 9.1
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+       "V3Score": 10
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+       "V3Score": 7.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-16845",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.13.15, 1.14.7",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-27918",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.15.9, 1.16.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-33195",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.15.13, 1.16.5",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 7.3
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+       "V2Score": 7.5,
+       "V3Score": 7.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-33196",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.15.13, 1.16.5",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-33198",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.15.13, 1.16.5",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-39293",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.16.8, 1.17.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-41771",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.16.10, 1.17.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-41772",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.16.10, 1.17.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-44716",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.16.12, 1.17.5",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-23772",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.16.14, 1.17.7",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:C",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 7.8,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-24675",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.9, 1.18.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-24921",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.16.15, 1.17.8",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-27664",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.18.6, 1.19.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-28131",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.12, 1.18.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:H",
+       "V3Score": 7.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-28327",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.9, 1.18.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 5,
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-2879",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.18.7, 1.19.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-2880",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.18.7, 1.19.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-29804",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.11, 1.18.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-30580",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.11, 1.18.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-30630",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.12, 1.18.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-30631",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.12, 1.18.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-30632",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.12, 1.18.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-30633",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.12, 1.18.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-30634",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.11, 1.18.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-30635",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.12, 1.18.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-32189",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.13, 1.18.5",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-41715",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.18.7, 1.19.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-41716",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.18.8, 1.19.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-41720",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.18.9, 1.19.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-41722",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.6, 1.20.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-41723",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.6, 1.20.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-41724",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.6, 1.20.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-41725",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.6, 1.20.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-24534",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.8, 1.20.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-24536",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.8, 1.20.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-24537",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.8, 1.20.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-24539",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.9, 1.20.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 7.3
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 7.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 7.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-29400",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.9, 1.20.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 7.3
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 7.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+       "V3Score": 7.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-29403",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.10, 1.20.5",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-39325",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.20.10, 1.21.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-45283",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.20.11, 1.21.4, 1.20.12, 1.21.5",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-45287",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.20.0",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-45288",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.21.9, 1.22.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-34156",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.22.7, 1.23.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-61726",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.12, 1.25.6",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-61729",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.11, 1.25.5",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-111943",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.10, 1.27.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N",
+       "V3Score": 6.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-25679",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.8, 1.26.1",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-27145",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.11, 1.26.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-32280",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.9, 1.26.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-32281",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.9, 1.26.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-32283",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.9, 1.26.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-33811",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.10, 1.26.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-33814",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.10, 1.26.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-33818",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.13, 1.26.6, 1.27.0-rc.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-39820",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.10, 1.26.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-39821",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.13, 1.26.6, 1.27.0-rc.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:N",
+       "V3Score": 8.2
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-39822",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.12, 1.26.5, 1.27.0-rc.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 7.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-39836",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.10, 1.26.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-42499",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.10, 1.26.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-42504",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.11, 1.26.4",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-56853",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.13, 1.26.6, 1.27.0-rc.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-56858",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.13, 1.26.6, 1.27.0-rc.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N",
+       "V3Score": 8.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-56859",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.13, 1.26.6, 1.27.0-rc.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-56860",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.13, 1.26.6, 1.27.0-rc.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-56862",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.13, 1.26.6, 1.27.0-rc.3",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-78667",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-78669",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-97031",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "HIGH",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-14039",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.13.13, 1.14.5",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:N/I:P/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V2Score": 5,
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-15586",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.13.13, 1.14.5",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 4.3,
+       "V3Score": 5.9
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2020-24553",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.14.8, 1.15.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:N/I:P/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V2Score": 4.3,
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-3114",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.14.14, 1.15.7",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:P/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V2Score": 6.4,
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-31525",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.15.12, 1.16.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:H/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 2.6,
+       "V3Score": 5.9
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-33197",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.15.13, 1.16.5",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:N/I:P/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V2Score": 4.3,
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-34558",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.15.14, 1.16.6",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:H/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V2Score": 2.6,
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-36221",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.15.15, 1.16.7",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:N/I:N/A:P",
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V2Score": 4.3,
+       "V3Score": 5.9
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2021-44717",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.16.12, 1.17.5",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 4.8
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:M/Au:N/C:P/I:P/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V2Score": 5.8,
+       "V3Score": 4.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 4.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-1705",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.12, 1.18.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-1962",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.12, 1.18.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-29526",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.10, 1.18.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V2Score": 5,
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 6.2
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-32148",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.12, 1.18.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-41717",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.18.9, 1.19.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-24532",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.7, 1.20.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-29406",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.11, 1.20.6",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+       "V3Score": 6.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-29409",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.19.12, 1.20.7, 1.21.0-rc.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-39318",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.20.8, 1.21.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-39319",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.20.8, 1.21.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-39326",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.20.12, 1.21.5",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-45284",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.20.11, 1.21.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-45289",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.21.8, 1.22.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 4.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2023-45290",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.21.8, 1.22.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-24783",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.21.8, 1.22.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 5.9
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 5.9
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-24784",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.21.8, 1.22.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-24785",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.21.8, 1.22.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 5.4
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-24789",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.21.11, 1.22.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:L",
+       "V3Score": 5.3
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 5.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-24791",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.21.12, 1.22.5",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-34155",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.22.7, 1.23.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 4.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-34158",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.22.7, 1.23.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-45336",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.22.11, 1.23.5, 1.24.0-rc.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 5.9
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-0913",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.23.10, 1.24.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 5.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-22866",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.22.12, 1.23.6, 1.24.0-rc.3",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 4
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-22870",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.23.7, 1.24.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:L",
+       "V3Score": 4.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-22871",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.23.8, 1.24.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+       "V3Score": 9.1
+      },
+      "ghsa": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+       "V3Score": 9.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:L/I:L/A:N",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-22873",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.23.9, 1.24.3",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:L/I:N/A:N",
+       "V3Score": 3.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-4673",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.23.10, 1.24.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:N/A:N",
+       "V3Score": 6.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:N/A:N",
+       "V3Score": 6.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-47906",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.23.12, 1.24.6",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:L",
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:L",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-47907",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.23.12, 1.24.6",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:L",
+       "V3Score": 7
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:L",
+       "V3Score": 7
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-47912",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.8, 1.25.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-58183",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.8, 1.25.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L",
+       "V3Score": 4.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-58185",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.8, 1.25.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-58187",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.9, 1.25.3",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-58188",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.8, 1.25.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-58189",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.8, 1.25.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-61723",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.8, 1.25.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-61724",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.8, 1.25.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-61725",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.8, 1.25.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-61727",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.11, 1.25.5",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-61728",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.12, 1.25.6",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 6.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-61730",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.12, 1.25.6",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-27142",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.8, 1.26.1",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-32282",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.9, 1.26.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:H/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 6.4
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:H/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 6.4
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H",
+       "V3Score": 7.8
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-32288",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.9, 1.26.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+       "V3Score": 5.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L",
+       "V3Score": 4.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-32289",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.9, 1.26.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-39823",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.10, 1.26.3",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-39825",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.10, 1.26.3",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-39826",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.10, 1.26.3",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+       "V3Score": 5.4
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-42505",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.12, 1.26.5, 1.27.0-rc.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-42507",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.11, 1.26.4",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-56866",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-78659",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-78660",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-78663",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H",
+       "V3Score": 9.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-94439",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 6.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-94440",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-94448",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-97030",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-97032",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "MEDIUM",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 7.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "V3Score": 5.9
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2022-30629",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.17.11, 1.18.3",
+     "Severity": "LOW",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:N/A:N",
+       "V3Score": 3.1
+      },
+      "nvd": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:N/A:N",
+       "V3Score": 3.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:N/A:N",
+       "V3Score": 3.1
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2024-45341",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.22.11, 1.23.5, 1.24.0-rc.2",
+     "Severity": "LOW",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+       "V3Score": 6.1
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:N",
+       "V3Score": 4.2
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2025-58186",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.24.8, 1.25.2",
+     "Severity": "LOW",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+       "V3Score": 5.3
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-27139",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.25.8, 1.26.1",
+     "Severity": "LOW",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 2.5
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:N/A:N",
+       "V3Score": 2.5
+      }
+     }
+    },
+    {
+     "VulnerabilityID": "CVE-2026-56857",
+     "PkgName": "stdlib",
+     "InstalledVersion": "v1.13.10",
+     "FixedVersion": "1.26.9, 1.27.2",
+     "Severity": "LOW",
+     "CVSS": {
+      "bitnami": {
+       "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+       "V3Score": 9.8
+      },
+      "redhat": {
+       "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N",
+       "V3Score": 3.3
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

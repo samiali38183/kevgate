@@ -1,4 +1,4 @@
-"""``kevgate`` command line: serve, keygen, import-csv, kev-refresh."""
+"""``kevgate`` command line: serve, keygen, import-csv, import-trivy, kev-refresh."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from kevgate.csv_import import CsvImportError, parse_csv
 from kevgate.db import FindingRepository
 from kevgate.kev import CISA_KEV_URL, KevFeedError, refresh_kev
 from kevgate.logs import configure_logging
+from kevgate.trivy_import import load_epss, parse_trivy
 
 CLI_BATCH = 1000
 
@@ -80,6 +81,39 @@ def _cmd_import_csv(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_import_trivy(args: argparse.Namespace) -> int:
+    settings = Settings.from_env()
+    db_path = args.db or settings.db_path
+    try:
+        raw = Path(args.file).read_bytes()
+        epss = load_epss(Path(args.epss_file).read_bytes()) if args.epss_file else None
+    except OSError as exc:
+        print(f"error: cannot read input: {exc}", file=sys.stderr)
+        return 1
+    except CsvImportError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    try:
+        result = parse_trivy(raw, default_acr=args.default_acr, epss=epss)
+    except CsvImportError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        for row in exc.errors:
+            print(f"  {row}", file=sys.stderr)
+        return 1
+    repo = FindingRepository(db_path)
+    try:
+        written = 0
+        for i in range(0, len(result.findings), CLI_BATCH):
+            written += repo.upsert_many(result.findings[i : i + CLI_BATCH])
+    finally:
+        repo.close()
+    print(
+        f"imported {written} finding(s); skipped {result.skipped_non_cve} non-CVE and "
+        f"{result.skipped_no_cvss} without CVSS; {result.epss_missing} had no EPSS score (set to 0)"
+    )
+    return 0
+
+
 def _cmd_kev_refresh(args: argparse.Namespace) -> int:
     output = args.output or Settings.from_env().kev_path
     try:
@@ -122,6 +156,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--default-acr", type=int, default=4, choices=range(1, 9), metavar="1-8")
     p.add_argument("--db", help="database path (default: KEVGATE_DB_PATH)")
     p.set_defaults(func=_cmd_import_csv)
+
+    p = sub.add_parser("import-trivy", help="load a Trivy JSON image report into the database")
+    p.add_argument("file")
+    p.add_argument("--default-acr", type=int, default=4, choices=range(1, 9), metavar="1-8")
+    p.add_argument("--epss-file", help="FIRST epss_scores CSV (plain or .gz); absent means 0.0")
+    p.add_argument("--db", help="database path (default: KEVGATE_DB_PATH)")
+    p.set_defaults(func=_cmd_import_trivy)
 
     p = sub.add_parser("kev-refresh", help="download and validate the CISA KEV feed")
     p.add_argument("--url", default=CISA_KEV_URL)

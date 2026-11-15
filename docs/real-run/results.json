@@ -1,0 +1,335 @@
+{
+ "findings_total": 1112,
+ "kev_findings": 10,
+ "scan_stats": {
+  "mysql:5.6": {
+   "findings": 188,
+   "skipped_non_cve": 3,
+   "skipped_no_cvss": 0,
+   "epss_missing": 0
+  },
+  "tomcat:8.5.50": {
+   "findings": 334,
+   "skipped_non_cve": 12,
+   "skipped_no_cvss": 0,
+   "epss_missing": 0
+  },
+  "httpd:2.4.49": {
+   "findings": 162,
+   "skipped_non_cve": 9,
+   "skipped_no_cvss": 0,
+   "epss_missing": 0
+  },
+  "vulnerables/web-dvwa": {
+   "findings": 428,
+   "skipped_non_cve": 12,
+   "skipped_no_cvss": 0,
+   "epss_missing": 0
+  }
+ },
+ "kev_catalog_entries": 1781,
+ "cvss_only": {
+  "mean_kev_in_top": {
+   "10": 0.15,
+   "25": 0.4,
+   "50": 0.86,
+   "100": 1.75
+  },
+  "min_max_kev_in_top": {
+   "10": [
+    0,
+    2
+   ],
+   "25": [
+    0,
+    2
+   ],
+   "50": [
+    0,
+    2
+   ],
+   "100": [
+    0,
+    2
+   ]
+  },
+  "mean_rank_of_kev": 246.0,
+  "mean_first_kev_rank": 39.7,
+  "mean_epss_in_top50": 0.163,
+  "trials": 1000,
+  "per_kev_finding": {
+   "CVE-2019-0211|vulnerables/web-dvwa": {
+    "cvss": 7.8,
+    "ahead_strictly": 253,
+    "tied_incl_self": 59
+   },
+   "CVE-2019-11043|vulnerables/web-dvwa": {
+    "cvss": 9.8,
+    "ahead_strictly": 1,
+    "tied_incl_self": 113
+   },
+   "CVE-2020-15999|tomcat:8.5.50": {
+    "cvss": 9.6,
+    "ahead_strictly": 114,
+    "tied_incl_self": 2
+   },
+   "CVE-2020-15999|vulnerables/web-dvwa": {
+    "cvss": 9.6,
+    "ahead_strictly": 114,
+    "tied_incl_self": 2
+   },
+   "CVE-2020-28949|vulnerables/web-dvwa": {
+    "cvss": 7.8,
+    "ahead_strictly": 253,
+    "tied_incl_self": 59
+   },
+   "CVE-2020-36193|vulnerables/web-dvwa": {
+    "cvss": 7.5,
+    "ahead_strictly": 316,
+    "tied_incl_self": 294
+   },
+   "CVE-2021-40438|vulnerables/web-dvwa": {
+    "cvss": 9.0,
+    "ahead_strictly": 150,
+    "tied_incl_self": 3
+   },
+   "CVE-2023-44487|tomcat:8.5.50": {
+    "cvss": 7.5,
+    "ahead_strictly": 316,
+    "tied_incl_self": 294
+   },
+   "CVE-2023-44487|httpd:2.4.49": {
+    "cvss": 7.5,
+    "ahead_strictly": 316,
+    "tied_incl_self": 294
+   },
+   "CVE-2025-24813|tomcat:8.5.50": {
+    "cvss": 9.8,
+    "ahead_strictly": 1,
+    "tied_incl_self": 113
+   }
+  }
+ },
+ "equal_acr": {
+  "mean_epss_in_top50": 0.817,
+  "kev_in_top": {
+   "10": 10,
+   "25": 10,
+   "50": 10,
+   "100": 10
+  },
+  "kev_ranks": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10
+  ],
+  "mean_rank_of_kev": 5.5,
+  "non_kev_above_last_kev": 0,
+  "non_kev_above_first_kev": 0,
+  "kev_below_a_non_kev": 0
+ },
+ "assumed_acr": {
+  "mean_epss_in_top50": 0.712,
+  "kev_in_top": {
+   "10": 10,
+   "25": 10,
+   "50": 10,
+   "100": 10
+  },
+  "kev_ranks": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10
+  ],
+  "mean_rank_of_kev": 5.5,
+  "non_kev_above_last_kev": 0,
+  "non_kev_above_first_kev": 0,
+  "kev_on_acr2_asset": [
+   {
+    "cve": "CVE-2019-11043",
+    "asset": "vulnerables/web-dvwa",
+    "risk": 81.7,
+    "rank": 5,
+    "non_kev_ahead": 0,
+    "ahead_highest_acr_non_kev": 0
+   },
+   {
+    "cve": "CVE-2021-40438",
+    "asset": "vulnerables/web-dvwa",
+    "risk": 80.2,
+    "rank": 6,
+    "non_kev_ahead": 0,
+    "ahead_highest_acr_non_kev": 0
+   },
+   {
+    "cve": "CVE-2020-28949",
+    "asset": "vulnerables/web-dvwa",
+    "risk": 75.0,
+    "rank": 7,
+    "non_kev_ahead": 0,
+    "ahead_highest_acr_non_kev": 0
+   },
+   {
+    "cve": "CVE-2020-15999",
+    "asset": "vulnerables/web-dvwa",
+    "risk": 74.5,
+    "rank": 8,
+    "non_kev_ahead": 0,
+    "ahead_highest_acr_non_kev": 0
+   },
+   {
+    "cve": "CVE-2020-36193",
+    "asset": "vulnerables/web-dvwa",
+    "risk": 71.8,
+    "rank": 9,
+    "non_kev_ahead": 0,
+    "ahead_highest_acr_non_kev": 0
+   },
+   {
+    "cve": "CVE-2019-0211",
+    "asset": "vulnerables/web-dvwa",
+    "risk": 71.3,
+    "rank": 10,
+    "non_kev_ahead": 0,
+    "ahead_highest_acr_non_kev": 0
+   }
+  ],
+  "last_kev_rank": 10,
+  "top15": [
+   {
+    "cve": "CVE-2025-24813",
+    "asset": "tomcat:8.5.50",
+    "kev": true,
+    "risk": 93.7,
+    "cvss": 9.8,
+    "epss": 0.99942
+   },
+   {
+    "cve": "CVE-2023-44487",
+    "asset": "tomcat:8.5.50",
+    "kev": true,
+    "risk": 89.3,
+    "cvss": 7.5,
+    "epss": 0.99999
+   },
+   {
+    "cve": "CVE-2020-15999",
+    "asset": "tomcat:8.5.50",
+    "kev": true,
+    "risk": 86.4,
+    "cvss": 9.6,
+    "epss": 0.63894
+   },
+   {
+    "cve": "CVE-2023-44487",
+    "asset": "httpd:2.4.49",
+    "kev": true,
+    "risk": 83.3,
+    "cvss": 7.5,
+    "epss": 0.99999
+   },
+   {
+    "cve": "CVE-2019-11043",
+    "asset": "vulnerables/web-dvwa",
+    "kev": true,
+    "risk": 81.7,
+    "cvss": 9.8,
+    "epss": 0.99783
+   },
+   {
+    "cve": "CVE-2021-40438",
+    "asset": "vulnerables/web-dvwa",
+    "kev": true,
+    "risk": 80.2,
+    "cvss": 9.0,
+    "epss": 0.99999
+   },
+   {
+    "cve": "CVE-2020-28949",
+    "asset": "vulnerables/web-dvwa",
+    "kev": true,
+    "risk": 75.0,
+    "cvss": 7.8,
+    "epss": 0.84554
+   },
+   {
+    "cve": "CVE-2020-15999",
+    "asset": "vulnerables/web-dvwa",
+    "kev": true,
+    "risk": 74.5,
+    "cvss": 9.6,
+    "epss": 0.63894
+   },
+   {
+    "cve": "CVE-2020-36193",
+    "asset": "vulnerables/web-dvwa",
+    "kev": true,
+    "risk": 71.8,
+    "cvss": 7.5,
+    "epss": 0.70595
+   },
+   {
+    "cve": "CVE-2019-0211",
+    "asset": "vulnerables/web-dvwa",
+    "kev": true,
+    "risk": 71.3,
+    "cvss": 7.8,
+    "epss": 0.65005
+   },
+   {
+    "cve": "CVE-2023-45288",
+    "asset": "mysql:5.6",
+    "kev": false,
+    "risk": 55.1,
+    "cvss": 7.5,
+    "epss": 0.89455
+   },
+   {
+    "cve": "CVE-2022-29155",
+    "asset": "mysql:5.6",
+    "kev": false,
+    "risk": 54.8,
+    "cvss": 9.8,
+    "epss": 0.64487
+   },
+   {
+    "cve": "CVE-2021-3711",
+    "asset": "tomcat:8.5.50",
+    "kev": false,
+    "risk": 53.3,
+    "cvss": 9.8,
+    "epss": 0.87816
+   },
+   {
+    "cve": "CVE-2023-38408",
+    "asset": "tomcat:8.5.50",
+    "kev": false,
+    "risk": 51.7,
+    "cvss": 9.8,
+    "epss": 0.797
+   },
+   {
+    "cve": "CVE-2024-2961",
+    "asset": "tomcat:8.5.50",
+    "kev": false,
+    "risk": 51.4,
+    "cvss": 8.8,
+    "epss": 0.8833
+   }
+  ]
+ }
+}
